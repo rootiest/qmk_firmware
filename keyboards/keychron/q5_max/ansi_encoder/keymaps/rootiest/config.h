@@ -80,21 +80,43 @@
 #endif
 
 /* Factory test keys */
-#define FN_KEY_1 MO(1)
-#define FN_KEY_2 MO(3)
+#define FN_KEY_1 MO(1) // Factory test key 1
+#define FN_KEY_2 MO(3) // Factory test key 2
 
-#define MATRIX_IO_DELAY 10
+// Matrix scan rate
+#define MATRIX_IO_DELAY 10 // 10ms delay for matrix IO.
 
-#define DYNAMIC_KEYMAP_LAYER_COUNT 8
+// Define dynamic keymap layer count for VIA
+#define DYNAMIC_KEYMAP_LAYER_COUNT 8 // 8 dynamic keymap layers. (VIA)
 
-#define SECURE_IDLE_TIMEOUT 0
+// Define secure idle timeout
+#define SECURE_IDLE_TIMEOUT 0 // Disable secure idle timeout.
 
+// Define select word timeout
 #define SELECT_WORD_TIMEOUT 2000 // When idle, clear state after 2 seconds.
 
 // Click every 50 ms for 20 clicks per second.
-#define MOUSE_TURBO_CLICK_PERIOD 50
-#define MOUSE_TURBO_CLICK_KEY KC_MS_BTN1
+#define MOUSE_TURBO_CLICK_PERIOD 50 // 50 ms mouse turbo click period.
+#define MOUSE_TURBO_CLICK_KEY KC_MS_BTN1 // Mouse button 1.
 
+// Define layer lock idle timeout
 #define LAYER_LOCK_IDLE_TIMEOUT 60000 // Turn off after 60 seconds.
 
+// Define sentence case timeout
 #define SENTENCE_CASE_TIMEOUT 2000 // Reset state after 2 seconds.
+
+// Leader key configuration
+#define LEADER_NO_TIMEOUT // Disable initial timeout.
+#define LEADER_PER_KEY_TIMING // Enable per-key timing.
+#define LEADER_TIMEOUT 300 // 300ms timeout per key after leader key.
+
+// Define idle timeout
+#define IDLE_TIMEOUT_MS 5000  // Idle timeout in milliseconds.
+
+// Define Prefix Key
+#define PREFIX_KEY C(KC_K) // Prefix key is Ctrl+K.
+
+// Define Trigger Keys
+#define COMM_COPY LT(0, KC_COMM) // Comma key: Tap for comma, hold for copy
+#define DOT_PASTE LT(0, KC_DOT) // Dot key: Tap for dot, hold for paste
+#define MPLY_MNXT LT(0, KC_MPLY) // Media play key: Tap for play, hold for next track
