@@ -62,6 +62,68 @@ enum custom_keycodes{
     TD_STICKY_SHIFT, // Tap five times for Caps Lock
     TD_NUM_CALC,     // Tap once for Num Lock, twice for Calculator
     TD_NUM_CLEAR,    // Tap once for Num Lock, twice for Clear
+    // Rootiest Custom Keycodes
+#ifdef VIA_ENABLE // If you are using VIA
+    SS_EMAIL = QK_USER_0, // Send email address
+#else // If you are not using VIA
+    SS_EMAIL = SAFE_RANGE,    // Send email address
+#endif
+    SS_NAME,     // Send full name
+    SS_NICK,     // Send nickname
+    SS_PHONE,    // Send phone number
+    SS_GITHUB,   // Send GitHub profile
+    SS_WEB,      // Send rootiest website
+    SS_PERSONAL, // Send personal email address
+    SS_ADDRESS,  // Send personal address
+    SELWORD,     // Select word
+    NEXTWORD,    // Move to the next word
+    PREVWORD,    // Move to the previous word
+    TURBO,       // Mouse turbo click
+    LLOCK,       // Layer lock
+    JIGGLE,      // Mouse jiggler
+    AUTOSAVE,    // Autosaver
+    UPDIR,       // Go up a directory
+    EQ3X,        // Types triple equal ===
+    DBLCLK,      // Double click the left mouse button
+    SELLINE,     // Selects the current line
+    SRCHSEL,     // Searches the current selection in a new tab
+    JOINLN,      // Join lines like Vim's `J` command
+    NEXTSEN,     // Next sentence macro
+    US_FLAG,     // Types US flag emoji 🇺🇸
+    DBLZERO,     // Types double zero
+    HEATMAP,     // Enables heatmap mode
+    ARROW,       // Types arrow: -> or =>
+    DEGREE,      // Types degree symbol: °
+    DEGREE_C,    // Types Celsius degree symbol: °C
+    DEGREE_F,    // Types Fahrenheit degree symbol: °F
+    SMILE,       // Types smile emoji: 🙂
+    FROWN,       // Types frown emoji: 🙁
+    LOL,         // Types LOL emoji: 😂
+    SHOCK,       // Types shock emoji: 😱
+    SAD,         // Types sad emoji: 😢
+    WINK,        // Types wink emoji: 😉
+    SHRUG,       // Types shrug emoji: 🤷
+    THINK,       // Types thinking emoji: 🤔
+    THUMBS_UP,   // Types thumbs up emoji: 👍
+    THUMBS_DOWN, // Types thumbs down emoji: 👎
+    HEART,       // Types heart emoji: ❤️
+    STAR,        // Types star emoji: ⭐
+    CHECK,       // Types check mark emoji: ✅
+    CROSS,       // Types cross mark emoji: ❌
+    HUNDRED,     // Types hundred emoji: 💯
+    WARNING,     // Types warning emoji: ⚠️
+    FIRE,        // Types fire emoji: 🔥
+    CLAP,        // Types clap emoji: 👏
+    POOP,        // Types poop emoji: 💩
+    BULLET,      // Types bullet point: •
+    DASH,        // Types dash: —
+    ELLIPSIS,    // Types ellipsis: …
+    COPYRIGHT,   // Types copyright symbol: ©
+    REGISTERED,  // Types registered symbol: ®
+    TRADEMARK,   // Types trademark symbol: ™
+    SECTION,     // Types section symbol: §
+    PARAGRAPH,   // Types paragraph symbol: ¶
+    EURO,        // Types euro symbol: €
     VSC_CMD = VSCODE_COMMAND_KEY, // VSCode command key
 };
 
@@ -450,7 +512,15 @@ const ucis_symbol_t ucis_symbol_table[] = UCIS_TABLE(
     UCIS_SYM("bride", 0x1F470),                // 👰
     UCIS_SYM("groom", 0x1F935),                // 🤵
     UCIS_SYM("baby", 0x1F476),                 // 👶
-    UCIS_SYM("child", 0x1F9D2)                 // 🧒
+    UCIS_SYM("child", 0x1F9D2),                // 🧒
+    UCIS_SYM("left_arrow", 0x2B05),            // ⬅️
+    UCIS_SYM("right_arrow", 0x27A1),           // ➡️
+    UCIS_SYM("up_arrow", 0x2B06),              // ⬆️
+    UCIS_SYM("down_arrow", 0x2B07),            // ⬇️
+    UCIS_SYM("up_left_arrow", 0x2196),         // ↖️
+    UCIS_SYM("up_right_arrow", 0x2197),        // ↗️
+    UCIS_SYM("down_right_arrow", 0x2198),      // ↘️
+    UCIS_SYM("down_left_arrow", 0x2199)        // ↙️
 );
 
 
@@ -510,7 +580,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_LSFT,            KC_Z,     KC_X,     KC_C,     KC_V,     KC_B,     KC_N,     KC_M,     KC_COMM,  KC_DOT,   KC_SLSH,              KC_RSFT,  KC_UP,                      KC_P1,    KC_P2,    KC_P3,
         SC_LCPO,  KC_LGUI, KC_LALT,                    KC_SPC,                 KC_RALT, MO(MAIN_FN), SC_RCPC,  KC_LEFT,  KC_DOWN,  KC_RGHT,                                   LT(SPECIAL_FN, KC_P0),  LT(PREFIX_C_K, KC_PDOT),   KC_PENT),
     [MAIN_FN] = LAYOUT_ansi_101(
-        _______,            KC_F1,    KC_F2,    KC_F3,    KC_F4,    RGB_VAD,    KC_F6,    KC_F7,    KC_F8,    KC_F9,    KC_MUTE,     KC_VOLD,   KC_VOLU,             A(KC_F4),  _______,  _______,  _______,    A(KC_F4),
+        _______,            KC_F1,    KC_F2,    KC_F3,    KC_F4,    RGB_VAD,    RGB_VAI,    KC_F7,    KC_F8,    KC_F9,    KC_MUTE,     KC_VOLD,   KC_VOLU,             A(KC_F4),  _______,  _______,  _______,    A(KC_F4),
         HEATMAP,  BT_HST1,  BT_HST2,  BT_HST3,  P2P4G,    _______,  _______,  _______,  _______,  _______,  _______,  _______,    _______,  _______,            _______,  KC_CALC,  _______,  _______,    _______,
         RGB_MOD,  RGB_TOG,  RGB_VAI,  RGB_HUI,  RGB_SAI,  RGB_SPI,  _______,  _______,  _______,  _______,  _______,  _______,    _______,  _______,            _______,  _______, SS_PERSONAL, SS_ADDRESS,
         _______,  C(KC_A), C(KC_S),  RGB_HUD,  RGB_SAD,  RGB_SPD,  _______,  _______,  _______,  _______,  _______,  _______,              _______,             _______,  SS_NICK,  SS_WEB,   SS_GITHUB,    _______,
@@ -780,6 +850,60 @@ static uint32_t idle_callback(uint32_t trigger_time, void* cb_arg) {
     return 0;
 }
 
+/* ##################################################################### */
+/* ####################### Encoder RGB Animation ####################### */
+/* ##################################################################### */
+// This function is called to set the RGB animation for the encoders.
+uint32_t encoder_animation_pattern(uint32_t trigger_time, void *cb_arg) {
+    if (cb_arg == NULL) {
+        // Display frame1 for 100ms
+        rgb_matrix_set_color(16, 255, 75, 75);
+        rgb_matrix_set_color(34, 255, 75, 75);
+        rgb_matrix_set_color(35, 255, 75, 75);
+        wait_ms(100);
+        // Display frame2 for 100ms
+        rgb_matrix_set_color(15, 255, 0, 0);
+        rgb_matrix_set_color(33, 255, 0, 0);
+        rgb_matrix_set_color(52, 255, 0, 0);
+        rgb_matrix_set_color(53, 255, 0, 0);
+        rgb_matrix_set_color(54, 255, 0, 0);
+        wait_ms(100);
+        // Clear frame1
+        rgb_matrix_set_color(16, 0, 0, 0);
+        rgb_matrix_set_color(34, 0, 0, 0);
+        rgb_matrix_set_color(35, 0, 0, 0);
+        wait_ms(100);
+        // Clear frame2
+        rgb_matrix_set_color(15, 0, 0, 0);
+        rgb_matrix_set_color(33, 0, 0, 0);
+        rgb_matrix_set_color(52, 0, 0, 0);
+        rgb_matrix_set_color(53, 0, 0, 0);
+    } else {
+        // Display frame2 for 100ms
+        rgb_matrix_set_color(15, 255, 0, 0);
+        rgb_matrix_set_color(33, 255, 0, 0);
+        rgb_matrix_set_color(52, 255, 0, 0);
+        rgb_matrix_set_color(53, 255, 0, 0);
+        rgb_matrix_set_color(54, 255, 0, 0);
+        wait_ms(100);
+        // Display frame1 for 100ms
+        rgb_matrix_set_color(16, 255, 75, 75);
+        rgb_matrix_set_color(34, 255, 75, 75);
+        rgb_matrix_set_color(35, 255, 75, 75);
+        wait_ms(100);
+        // Clear frame2
+        rgb_matrix_set_color(15, 0, 0, 0);
+        rgb_matrix_set_color(33, 0, 0, 0);
+        rgb_matrix_set_color(52, 0, 0, 0);
+        rgb_matrix_set_color(53, 0, 0, 0);
+        wait_ms(100);
+        // Clear frame1
+        rgb_matrix_set_color(16, 0, 0, 0);
+        rgb_matrix_set_color(34, 0, 0, 0);
+        rgb_matrix_set_color(35, 0, 0, 0);
+    }
+    return 0;
+}
 
 /* ##################################################################### */
 /* ########################## Encoder mappping ######################### */
@@ -935,6 +1059,20 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 add_oneshot_mods(MOD_BIT(KC_LSFT));  // Set one-shot mod for shift.
             }
             return false;
+        case NEXTWORD:  // Next word macro.
+            if (record->event.pressed) {
+                SEND_STRING(
+                    SS_LCTL(
+                        SS_TAP(X_RGHT)));
+            }
+            return false;
+        case PREVWORD:  // Previous word macro.
+            if (record->event.pressed) {
+                SEND_STRING(
+                    SS_LCTL(
+                        SS_TAP(X_LEFT)));
+            }
+            return false;
         case US_FLAG:  // Types US flag emoji 🇺🇸.
             if (record->event.pressed) {
                 send_unicode_string("🇺🇸");
@@ -975,43 +1113,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 }
             }
             return false;
-
-/*  Disable the backspace or delete based on shift key state override.
-    Too easy to activate the shifted version of the key by accident.
-    Keeping this code as an example for future reference.
-
-        case KC_BSPC: { // Backspace or Delete based on shift key state.
-            static uint16_t registered_key = KC_NO;
-            if (record->event.pressed) {  // On key press.
-                const uint8_t mods = get_mods();
-#ifndef NO_ACTION_ONESHOT
-                uint8_t shift_mods = (mods | get_oneshot_mods()) & MOD_MASK_SHIFT;
-#else
-                uint8_t shift_mods = mods & MOD_MASK_SHIFT;
-#endif  // NO_ACTION_ONESHOT
-                if (shift_mods) {  // At least one shift key is held.
-                    registered_key = KC_DEL;
-                    // If one shift is held, clear it from the mods. But if both
-                    // shifts are held, leave as is to send Shift + Del.
-                    if (shift_mods != MOD_MASK_SHIFT) {
-#ifndef NO_ACTION_ONESHOT
-                        del_oneshot_mods(MOD_MASK_SHIFT);
-#endif  // NO_ACTION_ONESHOT
-                        unregister_mods(MOD_MASK_SHIFT);
-                    }
-                } else {
-                    registered_key = KC_BSPC;
-                }
-
-                register_code(registered_key);
-                set_mods(mods);
-            } else {  // On key release.
-                unregister_code(registered_key);
-            }
-        }
-        return false;
-*/
-
         case DEGREE:  // Degree symbol macro: °
             if (record->event.pressed) {
                 send_unicode_string("°");
@@ -1167,6 +1268,45 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 send_unicode_string("€");
             }
             return false;
+        case KC_MUTE:  // Mute audio
+            if (record->event.pressed) {
+                tap_code16(KC_MUTE);
+                defer_exec(1, encoder_animation_pattern, NULL);
+            }
+            return false;
+/*  Backspace or delete based on shift key state override. */
+#ifdef USE_BSPC_DEL_OVERRIDE
+        case KC_BSPC: { // Backspace or Delete based on shift key state.
+            static uint16_t registered_key = KC_NO;
+            if (record->event.pressed) {  // On key press.
+                const uint8_t mods = get_mods();
+#ifndef NO_ACTION_ONESHOT
+                uint8_t shift_mods = (mods | get_oneshot_mods()) & MOD_MASK_SHIFT;
+#else
+                uint8_t shift_mods = mods & MOD_MASK_SHIFT;
+#endif  // NO_ACTION_ONESHOT
+                if (shift_mods) {  // At least one shift key is held.
+                    registered_key = KC_DEL;
+                    // If one shift is held, clear it from the mods. But if both
+                    // shifts are held, leave as is to send Shift + Del.
+                    if (shift_mods != MOD_MASK_SHIFT) {
+#ifndef NO_ACTION_ONESHOT
+                        del_oneshot_mods(MOD_MASK_SHIFT);
+#endif  // NO_ACTION_ONESHOT
+                        unregister_mods(MOD_MASK_SHIFT);
+                    }
+                } else {
+                    registered_key = KC_BSPC;
+                }
+
+                register_code(registered_key);
+                set_mods(mods);
+            } else {  // On key release.
+                unregister_code(registered_key);
+            }
+        }
+        return false;
+#endif
     }
 
     // Call the common keychron process record function
@@ -1183,7 +1323,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 // to trigger different actions. This is useful for creating a large number of
 // key combinations without having to assign each one to a separate key.
 void leader_start_user(void) {
-    // Do something when the leader key is pressed
+    // Do something when the leader key is first pressed
 }
 
 void leader_end_user(void) {
@@ -1308,6 +1448,40 @@ void leader_end_user(void) {
     } else if (leader_sequence_four_keys(KC_L, KC_I, KC_N, KC_U)) {
         // Leader, l, i, n, u => Activate the Linux Unicode input mode
         set_unicode_input_mode(UNICODE_MODE_LINUX);
+    } else if (leader_sequence_three_keys(KC_L, KC_A, KC_R)) {
+        // Leader, l, a, r => Types a left arrow emoji: ←
+        send_unicode_string("←");
+    } else if (leader_sequence_three_keys(KC_R, KC_A, KC_R)) {
+        // Leader, r, a, r => Types a right arrow emoji: →
+        send_unicode_string("→");
+    } else if (leader_sequence_three_keys(KC_U, KC_A, KC_R)) {
+        // Leader, u, a, r => Types an up arrow emoji: ↑
+        send_unicode_string("↑");
+    } else if (leader_sequence_three_keys(KC_D, KC_A, KC_R)) {
+        // Leader, d, a, r => Types a down arrow emoji: ↓
+        send_unicode_string("↓");
+    } else if (leader_sequence_four_keys(KC_U, KC_L, KC_A, KC_R)) {
+        // Leader, u, l, a, r => Types an up-left arrow emoji: ↖
+        send_unicode_string("↖");
+    } else if (leader_sequence_four_keys(KC_U, KC_R, KC_A, KC_R)) {
+        // Leader, u, r, a, r => Types an up-right arrow emoji: ↗
+        send_unicode_string("↗");
+    } else if (leader_sequence_four_keys(KC_D, KC_L, KC_A, KC_R)) {
+        // Leader, d, l, a, r => Types a down-left arrow emoji: ↙
+        send_unicode_string("↙");
+    } else if (leader_sequence_four_keys(KC_D, KC_R, KC_A, KC_R)) {
+        // Leader, d, r, a, r => Types a down-right arrow emoji: ↘
+        send_unicode_string("↘");
+    } else if(leader_sequence_five_keys(KC_N, KC_W, KC_O, KC_R, KC_D)) {
+        // Leader, n, w, o, r, d => Skips to next word
+        SEND_STRING(
+            SS_LCTL(
+                SS_TAP(X_RGHT)));
+    } else if(leader_sequence_five_keys(KC_P, KC_W, KC_O, KC_R, KC_D)) {
+        // Leader, p, w, o, r, d => Skips to previous word
+        SEND_STRING(
+            SS_LCTL(
+                SS_TAP(X_LEFT)));
     }
 }
 
@@ -1320,28 +1494,197 @@ void leader_end_user(void) {
 bool process_detected_host_os_user(os_variant_t detected_os) {
     switch (detected_os) {
         case OS_MACOS: // macOS
-            set_unicode_input_mode(UNICODE_MODE_LINUX);
-            //set_unicode_input_mode(UNICODE_MODE_MACOS);
+            //set_unicode_input_mode(UNICODE_MODE_LINUX);
+            set_unicode_input_mode(UNICODE_MODE_MACOS);
+            tap_code16(QK_MAGIC_SWAP_LCTL_LGUI);
             break;
         case OS_IOS: // iOS
-            set_unicode_input_mode(UNICODE_MODE_LINUX);
-            //set_unicode_input_mode(UNICODE_MODE_MACOS);
+            //set_unicode_input_mode(UNICODE_MODE_LINUX);
+            set_unicode_input_mode(UNICODE_MODE_MACOS);
+            tap_code16(QK_MAGIC_SWAP_LCTL_LGUI);
             break;
         case OS_WINDOWS: // Windows
             set_unicode_input_mode(UNICODE_MODE_WINDOWS);
             // set_unicode_input_mode(UNICODE_MODE_WINC); // WinCompose mode
+            tap_code16(QK_MAGIC_UNSWAP_LCTL_LGUI);
             break;
         case OS_LINUX: // Linux
             set_unicode_input_mode(UNICODE_MODE_LINUX);
+            tap_code16(QK_MAGIC_UNSWAP_LCTL_LGUI);
             break;
         case OS_UNSURE: // Unknown OS (or failed to detect)
             set_unicode_input_mode(UNICODE_MODE_LINUX);
+            tap_code16(QK_MAGIC_UNSWAP_LCTL_LGUI);
             break;
     }
-
     return true;
 }
 
+/* ##################################################################### */
+/* ####################### RGB MATRIX INDICATORS ####################### */
+/* ##################################################################### */
+// This function is called to set the RGB matrix indicators.
+bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
+    // Layer indicators
+    switch(get_highest_layer(layer_state|default_layer_state)) {
+    case SPECIAL_FN:
+#ifdef FN_LAYER_LED_INDICATOR
+        for (uint8_t i = led_min; i < led_max; i++) {
+            rgb_matrix_set_color(i, RGB_BLUE); // Set all LEDs to blue
+        }
+#endif
+        // WASD Arrow keys
+#ifdef WASD_ARROW_KEYS
+        RGB_MATRIX_INDICATOR_SET_COLOR(W_KEY_INDEX, 255, 75, 75);
+        RGB_MATRIX_INDICATOR_SET_COLOR(A_KEY_INDEX, 255, 75, 75);
+        RGB_MATRIX_INDICATOR_SET_COLOR(S_KEY_INDEX, 255, 75, 75);
+        RGB_MATRIX_INDICATOR_SET_COLOR(D_KEY_INDEX, 255, 75, 75);
+#endif
+        // Number Keys
+#ifdef BASIC_NUMBER_ROW
+        RGB_MATRIX_INDICATOR_SET_COLOR(KEY_1_INDEX, 75, 75, 255);
+        RGB_MATRIX_INDICATOR_SET_COLOR(KEY_2_INDEX, 75, 75, 255);
+        RGB_MATRIX_INDICATOR_SET_COLOR(KEY_3_INDEX, 75, 75, 255);
+        RGB_MATRIX_INDICATOR_SET_COLOR(KEY_4_INDEX, 75, 75, 255);
+        RGB_MATRIX_INDICATOR_SET_COLOR(KEY_5_INDEX, 75, 75, 255);
+        RGB_MATRIX_INDICATOR_SET_COLOR(KEY_6_INDEX, 75, 75, 255);
+        RGB_MATRIX_INDICATOR_SET_COLOR(KEY_7_INDEX, 75, 75, 255);
+        RGB_MATRIX_INDICATOR_SET_COLOR(KEY_8_INDEX, 75, 75, 255);
+        RGB_MATRIX_INDICATOR_SET_COLOR(KEY_9_INDEX, 75, 75, 255);
+        RGB_MATRIX_INDICATOR_SET_COLOR(KEY_0_INDEX, 75, 75, 255);
+#endif
+        // Pink Fn7 key indicator
+#ifdef FN7_INDEX
+        RGB_MATRIX_INDICATOR_SET_COLOR(FN7_INDEX, 255, 75, 75);
+#endif
+        break;
+    case MAIN_FN:
+#ifdef FN_LAYER_LED_INDICATOR
+        for (uint8_t i = led_min; i < led_max; i++) {
+            rgb_matrix_set_color(i, RGB_PURPLE); // Set all LEDs to purple
+        }
+#endif
+        // Inverted F keys
+#ifdef BASIC_FKEY_ROW
+        RGB_MATRIX_INDICATOR_SET_COLOR(F5_KEY_INDEX, 255, 75, 75);
+        RGB_MATRIX_INDICATOR_SET_COLOR(F6_KEY_INDEX, 255, 75, 75);
+        RGB_MATRIX_INDICATOR_SET_COLOR(F10_KEY_INDEX, 255, 75, 75);
+        RGB_MATRIX_INDICATOR_SET_COLOR(F11_KEY_INDEX, 255, 75, 75);
+        RGB_MATRIX_INDICATOR_SET_COLOR(F12_KEY_INDEX, 255, 75, 75);
+#endif
+        // Wireless keys
+#ifdef KEYCHRON_WIRELESS
+        RGB_MATRIX_INDICATOR_SET_COLOR(KEY_1_INDEX, 75, 75, 255);
+        RGB_MATRIX_INDICATOR_SET_COLOR(KEY_2_INDEX, 75, 75, 255);
+        RGB_MATRIX_INDICATOR_SET_COLOR(KEY_3_INDEX, 75, 75, 255);
+        RGB_MATRIX_INDICATOR_SET_COLOR(KEY_4_INDEX, 255, 255, 75);
+#endif
+        // Escape key
+        RGB_MATRIX_INDICATOR_SET_COLOR(ESC_KEY_INDEX, 0, 255, 125);
+        // Pink Fn key indicators
+#ifdef LFN_INDEX
+        RGB_MATRIX_INDICATOR_SET_COLOR(LFN_INDEX, 255, 75, 75);
+#endif
+#ifdef RFN_INDEX
+        RGB_MATRIX_INDICATOR_SET_COLOR(RFN_INDEX, 255, 75, 75);
+#endif
+        break;
+    case EXT_BASE:
+#ifdef BASE_LAYER_LED_INDICATOR
+        for (uint8_t i = led_min; i < led_max; i++) {
+            rgb_matrix_set_color(i, RGB_WHITE); // Set all LEDs to white
+        }
+#endif
+        break;
+    case PLAIN_BASE:
+#ifdef BASE_LAYER_LED_INDICATOR
+        for (uint8_t i = led_min; i < led_max; i++) {
+            rgb_matrix_set_color(i, RGB_WHITE); // Set all LEDs to white
+        }
+#endif
+        break;
+    case MAIN_BASE:
+#ifdef BASE_LAYER_LED_INDICATOR
+        for (uint8_t i = led_min; i < led_max; i++) {
+            rgb_matrix_set_color(i, RGB_WHITE); // Set all LEDs to white
+        }
+#endif
+        break;
+    default:
+        break;
+    }
+    // Pink LED indicators for Shift keys IF:
+    if(get_mods() & MOD_MASK_SHIFT || // Shift is held or
+        get_oneshot_mods() & MOD_MASK_SHIFT || // Shift is oneshot or
+        is_caps_word_on() || // Caps Word is active or
+        host_keyboard_led_state().caps_lock ) { // Caps Lock is on
+#ifdef LSHIFT_INDEX
+        RGB_MATRIX_INDICATOR_SET_COLOR(LSHIFT_INDEX, 255, 75, 75);
+#endif
+#ifdef RSHIFT_INDEX
+        RGB_MATRIX_INDICATOR_SET_COLOR(RSHIFT_INDEX, 255, 75, 75);
+#endif
+    }
+    // Pink Alt indicators
+    if(get_mods() & MOD_MASK_ALT || get_oneshot_mods() & MOD_MASK_ALT) {
+#ifdef LALT_INDEX
+        RGB_MATRIX_INDICATOR_SET_COLOR(LALT_INDEX, 255, 75, 75);
+#endif
+#ifdef RALT_INDEX
+        RGB_MATRIX_INDICATOR_SET_COLOR(RALT_INDEX, 255, 75, 75);
+#endif
+    }
+    // Pink Ctrl indicators
+    if(get_mods() & MOD_MASK_CTRL || get_oneshot_mods() & MOD_MASK_CTRL) {
+#ifdef LCTRL_INDEX
+        RGB_MATRIX_INDICATOR_SET_COLOR(LCTRL_INDEX, 255, 75, 75);
+#endif
+#ifdef RCTRL_INDEX
+        RGB_MATRIX_INDICATOR_SET_COLOR(RCTRL_INDEX, 255, 75, 75);
+#endif
+    }
+    // Pink GUI indicators
+    if(get_mods() & MOD_MASK_GUI || get_oneshot_mods() & MOD_MASK_GUI) {
+#ifdef LGUI_INDEX
+        RGB_MATRIX_INDICATOR_SET_COLOR(LGUI_INDEX, 255, 75, 75);
+#endif
+#ifdef RGUI_INDEX
+        RGB_MATRIX_INDICATOR_SET_COLOR(RGUI_INDEX, 255, 75, 75);
+#endif
+    }
+    // Pink Hyper indicators: Ctrl+Alt+Shift+GUI
+    if(get_mods() & MOD_MASK_CSAG || get_oneshot_mods() & MOD_MASK_CSAG) {
+#ifdef LHYPER_INDEX
+        RGB_MATRIX_INDICATOR_SET_COLOR(LHYPER_INDEX, 255, 75, 75);
+#endif
+#ifdef RHYPER_INDEX
+        RGB_MATRIX_INDICATOR_SET_COLOR(RHYPER_INDEX, 255, 75, 75);
+#endif
+    }
+    // Pink Meh indicators: Ctrl+Alt+Shift
+    if(get_mods() & MOD_MASK_CSA || get_oneshot_mods() & MOD_MASK_CSA) {
+#ifdef LMEH_INDEX
+        RGB_MATRIX_INDICATOR_SET_COLOR(LMEH_INDEX, 255, 75, 75);
+#endif
+#ifdef RMEH_INDEX
+        RGB_MATRIX_INDICATOR_SET_COLOR(RMEH_INDEX, 255, 75, 75);
+#endif
+    }
+    // Pink CAG indicators: Ctrl+Alt+GUI
+    if(get_mods() & MOD_MASK_CAG || get_oneshot_mods() & MOD_MASK_CAG) {
+#ifdef LCAG_INDEX
+        RGB_MATRIX_INDICATOR_SET_COLOR(LCAG_INDEX, 255, 75, 75);
+#endif
+#ifdef RCAG_INDEX
+        RGB_MATRIX_INDICATOR_SET_COLOR(RCAG_INDEX, 255, 75, 75);
+#endif
+    }
+    return false;
+}
+
+/* ##################################################################### */
+/* ######################## Matrix Scan function ####################### */
+/* ##################################################################### */
 // Actions performed each cycle of the matrix scan
 void matrix_scan_user(void) {
     select_word_task(); // Select word task

@@ -76,3 +76,11 @@ nozzel        -> nozzle
 sloder        -> solder
 ocurred       -> occurred
 sheild        -> shield
+youll         -> you'll
+youre         -> you're
+theyre        -> they're
+couldnt       -> couldn't
+wouldnt       -> wouldn't
+shouldnt      -> shouldn't
+theyll        -> they'll
+youd          -> you'd
