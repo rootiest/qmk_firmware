@@ -89,6 +89,9 @@
 // Define dynamic keymap layer count for VIA
 #define DYNAMIC_KEYMAP_LAYER_COUNT 8 // 8 dynamic keymap layers. (VIA)
 
+// Use default Rootiest Layers
+#define USE_ROOTIEST_LAYERS // Use default Rootiest layers.
+
 // Tri-Layer Identifiers
 #define TRI_LAYER_LOWER_LAYER 1
 #define TRI_LAYER_RAISE_LAYER 7
