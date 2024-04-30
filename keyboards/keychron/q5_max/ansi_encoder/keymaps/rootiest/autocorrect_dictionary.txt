@@ -84,3 +84,9 @@ wouldnt       -> wouldn't
 shouldnt      -> shouldn't
 theyll        -> they'll
 youd          -> you'd
+garbarge      -> garbage
+didnt         -> didn't
+doesnt        -> doesn't
+oposite       -> opposite
+oportunity    -> opportunity
+

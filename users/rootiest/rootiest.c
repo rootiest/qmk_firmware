@@ -17,15 +17,17 @@
  * along with rootiest.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "quantum.h"
+#include "os_detection.h" // OS detection
+#include "vscode_macros.h" // VSCode macros
 
-/* ##################################################################### */
-/* ########################### Layer Locking ########################### */
-/* ##################################################################### */
-// This function is called whenever the layer lock state changes.
-void layer_lock_set_user(layer_state_t locked_layers) {
-  // Do something like `set_led(is_layer_locked(NAV));`
+__attribute__ ((weak))
+bool process_record_keymap(uint16_t keycode, keyrecord_t *record) {
+    return true;
 }
 
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    return process_record_keymap(keycode, record);
+}
 
 /* ##################################################################### */
 /* ######################## Leader key functions ####################### */
@@ -202,6 +204,7 @@ void leader_end_user(void) {
 // This function is called to set the RGB matrix indicators.
 bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
     // Layer indicators
+#ifdef USE_RGB_LAYER_INDICATORS
     switch(get_highest_layer(layer_state|default_layer_state)) {
     case 7:
 #ifdef FN_LAYER_LED_INDICATOR
@@ -289,7 +292,9 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
     default:
         break;
     }
+#endif
     // Pink LED indicators for Shift keys IF:
+#ifdef USE_RGB_MOD_INDICATORS
     if(get_mods() & MOD_MASK_SHIFT || // Shift is held or
         get_oneshot_mods() & MOD_MASK_SHIFT || // Shift is oneshot or
         is_caps_word_on() || // Caps Word is active or
@@ -355,5 +360,41 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
         RGB_MATRIX_INDICATOR_SET_COLOR(RCAG_INDEX, 255, 75, 75);
 #endif
     }
+#endif
     return false;
+}
+
+/* ##################################################################### */
+/* ####################### OS detection function ####################### */
+/* ##################################################################### */
+// This function is called when the keyboard is initialized
+// and when the keyboard is connected to a new host.
+// It is used to set the Unicode input mode based on the detected OS.
+bool process_detected_host_os_user(os_variant_t detected_os) {
+    switch (detected_os) {
+        case OS_MACOS: // macOS
+            //set_unicode_input_mode(UNICODE_MODE_LINUX);
+            set_unicode_input_mode(UNICODE_MODE_MACOS);
+            tap_code16(QK_MAGIC_SWAP_LCTL_LGUI);
+            break;
+        case OS_IOS: // iOS
+            //set_unicode_input_mode(UNICODE_MODE_LINUX);
+            set_unicode_input_mode(UNICODE_MODE_MACOS);
+            tap_code16(QK_MAGIC_SWAP_LCTL_LGUI);
+            break;
+        case OS_WINDOWS: // Windows
+            set_unicode_input_mode(UNICODE_MODE_WINDOWS);
+            // set_unicode_input_mode(UNICODE_MODE_WINC); // WinCompose mode
+            tap_code16(QK_MAGIC_UNSWAP_LCTL_LGUI);
+            break;
+        case OS_LINUX: // Linux
+            set_unicode_input_mode(UNICODE_MODE_LINUX);
+            tap_code16(QK_MAGIC_UNSWAP_LCTL_LGUI);
+            break;
+        case OS_UNSURE: // Unknown OS (or failed to detect)
+            set_unicode_input_mode(UNICODE_MODE_LINUX);
+            tap_code16(QK_MAGIC_UNSWAP_LCTL_LGUI);
+            break;
+    }
+    return true;
 }

@@ -92,10 +92,16 @@
 // Use default Rootiest Layers
 #define USE_ROOTIEST_LAYERS // Use default Rootiest layers.
 
+// Use default Rootiest Keycodes
+#define USE_ROOTIEST_KEYCODES // Use default Rootiest keycodes.
+
+// Use default Rootiest Unicode Table
+#define USE_ROOTIEST_UNICODE_TABLE // Use default Rootiest Unicode table.
+
 // Tri-Layer Identifiers
-#define TRI_LAYER_LOWER_LAYER 1
-#define TRI_LAYER_RAISE_LAYER 7
-#define TRI_LAYER_ADJUST_LAYER 5
+#define TRI_LAYER_LOWER_LAYER 1  // Lower layer
+#define TRI_LAYER_RAISE_LAYER 7  // Raise layer
+#define TRI_LAYER_ADJUST_LAYER 5 // Adjust layer
 
 // Define secure idle timeout
 #define SECURE_IDLE_TIMEOUT 0 // Disable secure idle timeout.
@@ -139,6 +145,8 @@
 //#define USE_BSPC_DEL_OVERRIDE // Enables Shift+Backspace for Delete
 
 // RGB Matrix Indicators
+#define USE_RGB_LAYER_INDICATORS // Enables RGB matrix indicators for layers.
+#define USE_RGB_MOD_INDICATORS // Enables RGB matrix indicators for modifiers.
 #if defined(RGB_MATRIX_ENABLE) || defined(LED_MATRIX_ENABLE)
 // Modifier Keys
 #   define LSHIFT_INDEX 72
@@ -189,3 +197,12 @@
 #   define FN_LAYER_LED_INDICATOR // Enables Function layers LED indicators
 //#   define BASE_LAYER_LED_INDICATOR // Enables Base layers LED indicators
 #endif
+
+// Enable Advanced Midi
+#define MIDI_ADVANCED // Enable advanced MIDI features
+
+// Enable QK_MAKE keycode
+#define ENABLE_COMPILE_KEYCODE // Enable QK_MAKE keycode
+
+// NKRO on by default
+//#define FORCE_NKRO // Force NKRO

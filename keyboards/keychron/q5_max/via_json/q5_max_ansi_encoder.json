@@ -139,7 +139,8 @@
     {"name": "Section", "title": "Section symbol", "shortName": "SECTION"},
     {"name": "Paragraph", "title": "Paragraph symbol", "shortName": "PARAGRAPH"},
     {"name": "Euro", "title": "Euro symbol", "shortName": "EURO"},
-    {"name": "VSCode Command", "title": "VSCode command key", "shortName": "VSC_CMD"}
+    {"name": "VSCode Command", "title": "VSCode command key", "shortName": "VSC_CMD"},
+    {"name": "ALTx4 Key", "title": "Alt x 4", "shortName": "ALT4KEY"}
   ],
   "matrix": {"rows": 6, "cols" : 19},
   "layouts": {

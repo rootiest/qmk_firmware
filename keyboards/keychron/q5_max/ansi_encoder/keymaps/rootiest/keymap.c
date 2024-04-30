@@ -19,13 +19,11 @@
 
 #include QMK_KEYBOARD_H // QMK Keyboard library
 #include "keychron_common.h" // Keychron common definitions
-#include "os_detection.h" // OS detection
 #include "features/select_word.h" // Select word feature
 #include "features/mouse_turbo_click.h" // Mouse turbo click feature
 #include "features/layer_lock.h" // Layer lock feature
 #include "features/achordion.h" // Achordion feature
 #include "features/sentence_case.h" // Sentence case feature
-#include "features/vscode_macros.h" // VSCode macros
 #include "rootiest.h" // Rootiest customizations
 
     /* ============================================================================================================ */
@@ -51,11 +49,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_LSFT,            KC_Z,     KC_X,     KC_C,     KC_V,     KC_B,     KC_N,     KC_M,     KC_COMM,  KC_DOT,   KC_SLSH,              KC_RSFT,  KC_UP,                      KC_P1,    KC_P2,    KC_P3,
         SC_LCPO,  KC_LGUI, KC_LALT,                    KC_SPC,                 KC_RALT, MO(MAIN_FN), SC_RCPC,  KC_LEFT,  KC_DOWN,  KC_RGHT,                                   LT(SPECIAL_FN, KC_P0),  LT(PREFIX_C_K, KC_PDOT),   KC_PENT),
     [MAIN_FN] = LAYOUT_ansi_101(
-        _______,            KC_F1,    KC_F2,    KC_F3,    KC_F4,    RGB_VAD,    RGB_VAI,    KC_F7,    KC_F8,    KC_F9,    KC_MUTE,     KC_VOLD,   KC_VOLU,             A(KC_F4),  _______,  _______,  _______,    A(KC_F4),
+        _______,            KC_F1,    KC_F2,    KC_F3,    KC_F4,    RGB_VAD,    RGB_VAI,    KC_F7,    KC_F8,    KC_F9,    KC_MUTE,     KC_VOLD,   KC_VOLU,      A(KC_F4), _______, _______, ALT4KEY,    A(KC_F4),
         HEATMAP,  BT_HST1,  BT_HST2,  BT_HST3,  P2P4G,    _______,  _______,  _______,  _______,  _______,  _______,  _______,    _______,  _______,            _______,  KC_CALC,  _______,  _______,    _______,
         RGB_MOD,  RGB_TOG,  RGB_VAI,  RGB_HUI,  RGB_SAI,  RGB_SPI,  _______,  _______,  _______,  _______,  _______,  _______,    _______,  _______,            _______,  _______, SS_PERSONAL, SS_ADDRESS,
         _______,  C(KC_A), C(KC_S),  RGB_HUD,  RGB_SAD,  RGB_SPD,  _______,  _______,  _______,  _______,  _______,  _______,              _______,             _______,  SS_NICK,  SS_WEB,   SS_GITHUB,    _______,
-        _______,            C(KC_Z),  C(KC_X),  C(KC_C),  C(KC_V),  BAT_LVL,  NK_TOGG,  _______,  _______,  AC_TOGG,  _______,              _______,  _______,            SS_NAME,  SS_EMAIL,  SS_PHONE,
+        _______,            C(KC_Z),  C(KC_X),  C(KC_C),  C(KC_V),  BAT_LVL,  NK_TOGG,  TO(MUSIK),  _______,  AC_TOGG,  _______,              _______,  _______,            SS_NAME,  SS_EMAIL,  SS_PHONE,
         _______,  _______,  _______,                                _______,                                _______,  _______,    _______,  TD(TD_OPEN),  _______,  TD(TD_CLOSE),            _______,  _______,    _______),
     [PLAIN_BASE] = LAYOUT_ansi_101(
         KC_ESC,             KC_F1,    KC_F2,    KC_F3,    KC_F4,    KC_F5,    RGB_VAI,    KC_F7,    KC_F8,    KC_F9,    KC_F10,     KC_F11,   KC_F12,             KC_DEL,   _______,  _______,  _______,    KC_MUTE,
@@ -66,7 +64,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_LCTL,  KC_LWIN,  KC_LALT,                                KC_SPC,                                 KC_RALT,  MO(PLAIN_FN), KC_RCTL,  KC_LEFT,  KC_DOWN,  KC_RGHT,            KC_P0,    KC_PDOT,    KC_PENT),
     [PLAIN_FN] = LAYOUT_ansi_101(
         _______,            KC_BRID,  KC_BRIU,  KC_TASK,  KC_FILE,  RGB_VAD,  RGB_VAI,  KC_MPRV,  KC_MPLY,  KC_MNXT,  KC_MUTE,    KC_VOLD,  KC_VOLU,            _______,  _______,  _______,  _______,    RGB_TOG,
-        _______,  BT_HST1,  BT_HST2,  BT_HST3,  P2P4G,    _______,  _______,  _______,  _______,  _______,  _______,  _______,    _______,  _______,            _______, DF(MAIN_BASE), _______,  _______,    _______,
+        _______,  BT_HST1,  BT_HST2,  BT_HST3,  P2P4G,    _______,  _______,  _______,  _______,  _______,  _______,  _______,    _______,  _______,            _______, KC_CLEAR, _______,  _______,    _______,
         RGB_TOG,  RGB_MOD,  RGB_VAI,  RGB_HUI,  RGB_SAI,  RGB_SPI,  _______,  _______,  _______,  _______,  _______,  _______,    _______,  _______,            _______,  _______,  _______,  _______,
         _______,  RGB_RMOD, RGB_VAD,  RGB_HUD,  RGB_SAD,  RGB_SPD,  _______,  _______,  _______,  _______,  _______,  _______,              _______,            KC_END,   _______,  _______,  _______,    _______,
         _______,            _______,  _______,  _______,  _______,  BAT_LVL,  NK_TOGG,  _______,  _______,  _______,  _______,              _______,  _______,            _______,  _______,  _______,
@@ -85,13 +83,13 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         _______,  _______, _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,              _______,             _______,  _______,  _______,   _______,    _______,
         _______,            _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,              _______,  _______,            _______,  _______,  _______,
         _______,  _______,  _______,                                _______,                                _______,  _______,    _______,  _______,  _______,  _______,            _______,  _______,    _______),
-    [LAYER_6] = LAYOUT_ansi_101(
+    [MUSIK] = LAYOUT_ansi_101(
         KC_ESC,             KC_F1,    KC_F2,    KC_F3,    KC_F4,    KC_F5,    KC_F6,    KC_F7,    KC_F8,    KC_F9,    KC_F10,     KC_F11,   KC_F12,             KC_DEL,   _______,  _______,  _______,    KC_MUTE,
-        KC_GRV,   KC_1,     KC_2,     KC_3,     KC_4,     KC_5,     KC_6,     KC_7,     KC_8,     KC_9,     KC_0,     KC_MINS,    KC_EQL,   KC_BSPC,            KC_PGUP,  KC_NUM,   KC_PSLS,  KC_PAST,    KC_PMNS,
-        KC_TAB,   KC_Q,     KC_W,     KC_E,     KC_R,     KC_T,     KC_Y,     KC_U,     KC_I,     KC_O,     KC_P,     KC_LBRC,    KC_RBRC,  KC_BSLS,            KC_PGDN,  KC_P7,    KC_P8,    KC_P9,
-        KC_CAPS,  KC_A,     KC_S,     KC_D,     KC_F,     KC_G,     KC_H,     KC_J,     KC_K,     KC_L,     KC_SCLN,  KC_QUOT,              KC_ENT,             KC_HOME,  KC_P4,    KC_P5,    KC_P6,      KC_PPLS,
-        KC_LSFT,            KC_Z,     KC_X,     KC_C,     KC_V,     KC_B,     KC_N,     KC_M,     KC_COMM,  KC_DOT,   KC_SLSH,              KC_RSFT,  KC_UP,              KC_P1,    KC_P2,    KC_P3,
-        KC_LCTL,  KC_LWIN,  KC_LALT,                                KC_SPC,                                 KC_RALT,  MO(PLAIN_FN), KC_RCTL,  KC_LEFT,  KC_DOWN,  KC_RGHT,            KC_P0,    KC_PDOT,    KC_PENT),
+        KC_GRV,   KC_1,     MI_C3,    MI_D3,    MI_E3,    MI_F3,    MI_G3,    MI_A3,    MI_B3,     KC_9,     KC_0,     KC_MINS,    KC_EQL,   KC_BSPC,            KC_PGUP,  KC_NUM,   KC_PSLS,  KC_PAST,    KC_PMNS,
+        KC_TAB,   KC_Q,     MI_C2,    MI_D2,    MI_E2,    MI_F2,    MI_G2,    MI_A2,    MI_B2,     KC_O,     KC_P,     KC_LBRC,    KC_RBRC,  KC_BSLS,            KC_PGDN,  KC_P7,    KC_P8,    KC_P9,
+        KC_CAPS,  KC_A,     MI_C1,    MI_D1,    MI_E1,    MI_F1,    MI_G1,    MI_A1,    MI_B1,     KC_L,     KC_SCLN,  KC_QUOT,              KC_ENT,             KC_HOME,  KC_P4,    KC_P5,    KC_P6,      KC_PPLS,
+        KC_LSFT,            MI_C,     MI_D,     MI_E,     MI_F,     MI_G,     MI_A,     MI_B,     KC_COMM,  KC_DOT,   KC_SLSH,              KC_RSFT,  MI_OCTU,              KC_P1,    KC_P2,    KC_P3,
+        MI_SUST,  MI_MOD,  MI_SOFT,                                MI_AOFF,                                 MI_SOFT,  TO(MUSIK), MI_SUST,  MI_TRSD,  MI_OCTD,  MI_TRSU,            KC_P0,    KC_PDOT,    KC_PENT),
     [SPECIAL_FN] = LAYOUT_ansi_101(
         KC_ESC,             KC_F1,    KC_F2,    KC_F3,    KC_F4,    KC_F5,    KC_F6,    KC_F7,    KC_F8,    KC_F9,    KC_F10,     KC_F11,   KC_F12,             KC_DEL,   _______,  _______,  _______,    KC_MUTE,
         KC_TILD,  KC_EXLM,  KC_AT,    KC_HASH,  KC_DLR,   KC_PERC,  KC_CIRC,  KC_KP_7,  KC_KP_8,  KC_KP_9,  KC_ASTR,  KC_PMNS,    KC_EQL,   KC_BSPC,            _______,  _______,   _______,  _______,    _______,
@@ -131,6 +129,8 @@ void mouse_jiggle_toggle(void) {
 
 // Autosaver (automatically saves documents every 30 seconds)
 // NOTE: This function is not currently operational.
+// The intended function is to send Ctrl+S every 30 seconds to
+// save the current document continuously.
 bool autosave_enabled = false;
 
 void autosave_toggle(void) {
@@ -314,61 +314,6 @@ static uint32_t idle_callback(uint32_t trigger_time, void* cb_arg) {
 }
 
 /* ##################################################################### */
-/* ####################### Encoder RGB Animation ####################### */
-/* ##################################################################### */
-// This function is called to set the RGB animation for the encoders.
-uint32_t encoder_animation_pattern(uint32_t trigger_time, void *cb_arg) {
-    if (cb_arg == NULL) {
-        // Display frame1 for 100ms
-        rgb_matrix_set_color(16, 255, 75, 75);
-        rgb_matrix_set_color(34, 255, 75, 75);
-        rgb_matrix_set_color(35, 255, 75, 75);
-        wait_ms(100);
-        // Display frame2 for 100ms
-        rgb_matrix_set_color(15, 255, 0, 0);
-        rgb_matrix_set_color(33, 255, 0, 0);
-        rgb_matrix_set_color(52, 255, 0, 0);
-        rgb_matrix_set_color(53, 255, 0, 0);
-        rgb_matrix_set_color(54, 255, 0, 0);
-        wait_ms(100);
-        // Clear frame1
-        rgb_matrix_set_color(16, 0, 0, 0);
-        rgb_matrix_set_color(34, 0, 0, 0);
-        rgb_matrix_set_color(35, 0, 0, 0);
-        wait_ms(100);
-        // Clear frame2
-        rgb_matrix_set_color(15, 0, 0, 0);
-        rgb_matrix_set_color(33, 0, 0, 0);
-        rgb_matrix_set_color(52, 0, 0, 0);
-        rgb_matrix_set_color(53, 0, 0, 0);
-    } else {
-        // Display frame2 for 100ms
-        rgb_matrix_set_color(15, 255, 0, 0);
-        rgb_matrix_set_color(33, 255, 0, 0);
-        rgb_matrix_set_color(52, 255, 0, 0);
-        rgb_matrix_set_color(53, 255, 0, 0);
-        rgb_matrix_set_color(54, 255, 0, 0);
-        wait_ms(100);
-        // Display frame1 for 100ms
-        rgb_matrix_set_color(16, 255, 75, 75);
-        rgb_matrix_set_color(34, 255, 75, 75);
-        rgb_matrix_set_color(35, 255, 75, 75);
-        wait_ms(100);
-        // Clear frame2
-        rgb_matrix_set_color(15, 0, 0, 0);
-        rgb_matrix_set_color(33, 0, 0, 0);
-        rgb_matrix_set_color(52, 0, 0, 0);
-        rgb_matrix_set_color(53, 0, 0, 0);
-        wait_ms(100);
-        // Clear frame1
-        rgb_matrix_set_color(16, 0, 0, 0);
-        rgb_matrix_set_color(34, 0, 0, 0);
-        rgb_matrix_set_color(35, 0, 0, 0);
-    }
-    return 0;
-}
-
-/* ##################################################################### */
 /* ########################## Encoder mappping ######################### */
 /* ##################################################################### */
 // The encoder map defines the behavior of the encoders. It maps the
@@ -376,15 +321,17 @@ uint32_t encoder_animation_pattern(uint32_t trigger_time, void *cb_arg) {
 #if defined(ENCODER_MAP_ENABLE)
 const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
     [MAIN_BASE] = {ENCODER_CCW_CW(KC_VOLD, KC_VOLU)}, // Volume control
-    [MAIN_FN]   = {ENCODER_CCW_CW(KC_WH_D, KC_WH_U)}, // Scroll wheel
+    [MAIN_FN]   = {ENCODER_CCW_CW(KC_WH_U, KC_WH_D)}, // Scroll wheel
     [PLAIN_BASE] = {ENCODER_CCW_CW(KC_VOLD, KC_VOLU)}, // Volume control
     [PLAIN_FN]   = {ENCODER_CCW_CW(RGB_VAD, RGB_VAI)}, // RGB brightness control
     [EXT_BASE]  = {ENCODER_CCW_CW(KC_VOLD, KC_VOLU)}, // Volume control
     [PREFIX_C_K]  = {ENCODER_CCW_CW(C(KC_LEFT), C(KC_RIGHT))}, // Move cursor by word
-    [LAYER_6]  = {ENCODER_CCW_CW(KC_VOLD, KC_VOLU)}, // Volume control
+    [MUSIK]  = {ENCODER_CCW_CW(KC_VOLD, KC_VOLU)}, // Volume control
     [SPECIAL_FN]  = {ENCODER_CCW_CW(KC_WH_L, KC_WH_R)}, // Horizontal scroll wheel
 };
 #endif // ENCODER_MAP_ENABLE
+
+bool is_alt_4_active = false;
 
 /* ##################################################################### */
 /* ######################## Process Record User ######################## */
@@ -392,7 +339,7 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
 // Actions performed when a key is pressed or released
 // Here we define the bulk of the custom keycodes and features performed
 // by a key press or release.
-bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+bool process_record_keymap(uint16_t keycode, keyrecord_t *record) {
 
     // On every key event, start or extend the deferred execution to call
     // `idle_callback()` after IDLE_TIMEOUT_MS.
@@ -407,6 +354,31 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (!process_layer_lock(keycode, record, LLOCK)) { return false; } // Layer lock
     if (!process_achordion(keycode, record)) { return false; } // Achordion
     if (!process_sentence_case(keycode, record)) { return false; } // Sentence case
+
+    // Alt4Key overrides
+    if (!record->event.pressed) {  // On key up event.
+        static uint8_t count = 0;
+        if (keycode == ALT4KEY) {
+            count = 5;  // Tapping ALT4KEY sets count = 4.
+            is_alt_4_active = true;
+            return true;
+        }
+        // While count > 0, hold Alt on next key.
+        if (count > 0) {
+            if (get_mods() == (MOD_BIT(KC_RALT))) {
+                --count;
+            } else {
+                register_code(KC_RALT);
+                --count;
+            }
+        } else {
+            if (is_alt_4_active) {
+                is_alt_4_active = false;
+                clear_mods();
+                return false;
+            }
+        }
+    }
 
     // Get current mod and one-shot mod states.
     const uint8_t mods = get_mods();
@@ -731,12 +703,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 send_unicode_string("€");
             }
             return false;
-        case KC_MUTE:  // Mute audio
-            if (record->event.pressed) {
-                tap_code16(KC_MUTE);
-                defer_exec(1, encoder_animation_pattern, NULL);
-            }
-            return false;
 /*  Backspace or delete based on shift key state override. */
 #ifdef USE_BSPC_DEL_OVERRIDE
         case KC_BSPC: { // Backspace or Delete based on shift key state.
@@ -780,38 +746,11 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 }
 
 /* ##################################################################### */
-/* ####################### OS detection function ####################### */
+/* ########################### Layer Locking ########################### */
 /* ##################################################################### */
-// This function is called when the keyboard is initialized
-// and when the keyboard is connected to a new host.
-// It is used to set the Unicode input mode based on the detected OS.
-bool process_detected_host_os_user(os_variant_t detected_os) {
-    switch (detected_os) {
-        case OS_MACOS: // macOS
-            //set_unicode_input_mode(UNICODE_MODE_LINUX);
-            set_unicode_input_mode(UNICODE_MODE_MACOS);
-            tap_code16(QK_MAGIC_SWAP_LCTL_LGUI);
-            break;
-        case OS_IOS: // iOS
-            //set_unicode_input_mode(UNICODE_MODE_LINUX);
-            set_unicode_input_mode(UNICODE_MODE_MACOS);
-            tap_code16(QK_MAGIC_SWAP_LCTL_LGUI);
-            break;
-        case OS_WINDOWS: // Windows
-            set_unicode_input_mode(UNICODE_MODE_WINDOWS);
-            // set_unicode_input_mode(UNICODE_MODE_WINC); // WinCompose mode
-            tap_code16(QK_MAGIC_UNSWAP_LCTL_LGUI);
-            break;
-        case OS_LINUX: // Linux
-            set_unicode_input_mode(UNICODE_MODE_LINUX);
-            tap_code16(QK_MAGIC_UNSWAP_LCTL_LGUI);
-            break;
-        case OS_UNSURE: // Unknown OS (or failed to detect)
-            set_unicode_input_mode(UNICODE_MODE_LINUX);
-            tap_code16(QK_MAGIC_UNSWAP_LCTL_LGUI);
-            break;
-    }
-    return true;
+// This function is called whenever the layer lock state changes.
+void layer_lock_set_user(layer_state_t locked_layers) {
+  // Do something like `set_led(is_layer_locked(NAV));`
 }
 
 /* ##################################################################### */

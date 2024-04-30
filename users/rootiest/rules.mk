@@ -1,8 +1,3 @@
-SRC += features/select_word.c
-SRC += features/mouse_turbo_click.c
-SRC += features/layer_lock.c
-SRC += features/achordion.c
-SRC += features/sentence_case.c
 VIA_ENABLE = yes
 KEY_LOCK_ENABLE = yes
 MOUSEKEY_ENABLE = yes
