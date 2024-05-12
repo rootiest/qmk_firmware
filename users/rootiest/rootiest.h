@@ -513,34 +513,34 @@ const ucis_symbol_t ucis_symbol_table[] = UCIS_TABLE(UCIS_SYM("rofl", 0x1F923), 
 /* ##################################################################### */
 // Combos are performed by pressing multiple keys simultaneously.
 // This is different than tap dance keys, which are performed by tapping keys in sequence.
-const uint16_t PROGMEM combo_undo[]             = {KC_Z, KC_X, COMBO_END};                        // Undo: Z + X
-const uint16_t PROGMEM combo_cut[]              = {KC_Z, KC_C, COMBO_END};                        // Cut: Z + C
-const uint16_t PROGMEM combo_copy[]             = {KC_X, KC_C, COMBO_END};                        // Copy: X + C
-const uint16_t PROGMEM combo_paste[]            = {KC_C, KC_V, COMBO_END};                        // Paste: C + V
-const uint16_t PROGMEM combo_select_all[]       = {KC_Z, KC_V, COMBO_END};                        // Select all: Z + A
+// const uint16_t PROGMEM combo_undo[]             = {KC_Z, KC_X, COMBO_END};                        // Undo: Z + X
+// const uint16_t PROGMEM combo_cut[]              = {KC_Z, KC_C, COMBO_END};                        // Cut: Z + C
+// const uint16_t PROGMEM combo_copy[]             = {KC_X, KC_C, COMBO_END};                        // Copy: X + C
+// const uint16_t PROGMEM combo_paste[]            = {KC_C, KC_V, COMBO_END};                        // Paste: C + V
+// const uint16_t PROGMEM combo_select_all[]       = {KC_Z, KC_V, COMBO_END};                        // Select all: Z + A
 const uint16_t PROGMEM combo_shift_lock[]       = {KC_LSFT, KC_RSFT, COMBO_END};                  // Shift lock: Left Shift + Right Shift
-const uint16_t PROGMEM combo_select_word[]      = {KC_LEFT_BRACKET, KC_RIGHT_BRACKET, COMBO_END}; // Select word: [ + ]
-const uint16_t PROGMEM combo_select_line[]      = {KC_SEMICOLON, KC_QUOTE, COMBO_END};            // Select the current line: ; + '
-const uint16_t PROGMEM combo_join_lines[]       = {KC_COMMA, KC_DOT, COMBO_END};                  // Join lines like Vim's `J` command: , + .
+//const uint16_t PROGMEM combo_select_word[]      = {KC_LEFT_BRACKET, KC_RIGHT_BRACKET, COMBO_END}; // Select word: [ + ]
+//const uint16_t PROGMEM combo_select_line[]      = {KC_SEMICOLON, KC_QUOTE, COMBO_END};            // Select the current line: ; + '
+// const uint16_t PROGMEM combo_join_lines[]       = {KC_COMMA, KC_DOT, COMBO_END};                  // Join lines like Vim's `J` command: , + .
 const uint16_t PROGMEM combo_autocorrect[]      = {KC_A, KC_C, COMBO_END};                        // Autocorrect toggle: A + C
-const uint16_t PROGMEM combo_search_selection[] = {KC_F, KC_S, COMBO_END};                        // Search selection: F + S
-const uint16_t PROGMEM combo_up_dir[]           = {KC_DOT, KC_SLASH, COMBO_END};                  // Go up a directory: . + /
+// const uint16_t PROGMEM combo_search_selection[] = {KC_F, KC_S, COMBO_END};                        // Search selection: F + S
+// const uint16_t PROGMEM combo_up_dir[]           = {KC_DOT, KC_SLASH, COMBO_END};                  // Go up a directory: . + /
 
 // ##################################################################### //
 // ######################### Define Combo Array ######################## //
 // ##################################################################### //
 // The combo array allows the firmware to keep track of the state of each combo.
 combo_t key_combos[] = {
-    COMBO(combo_copy, C(KC_C)),             // Copy: Ctrl + C
-    COMBO(combo_paste, C(KC_V)),            // Paste: Ctrl + V
-    COMBO(combo_undo, C(KC_Z)),             // Undo: Ctrl + Z
-    COMBO(combo_cut, C(KC_X)),              // Cut: Ctrl + X
-    COMBO(combo_select_all, C(KC_A)),       // Select all: Ctrl + A
+    // COMBO(combo_copy, C(KC_C)),             // Copy: Ctrl + C
+    // COMBO(combo_paste, C(KC_V)),            // Paste: Ctrl + V
+    // COMBO(combo_undo, C(KC_Z)),             // Undo: Ctrl + Z
+    // COMBO(combo_cut, C(KC_X)),              // Cut: Ctrl + X
+    // COMBO(combo_select_all, C(KC_A)),       // Select all: Ctrl + A
     COMBO(combo_shift_lock, KC_CAPS),       // Shift lock: Caps Lock
     COMBO(combo_autocorrect, AC_TOGG),      // Autocorrect toggle: Alt + C
-    COMBO(combo_select_word, SELWORD),      // Select word
-    COMBO(combo_select_line, SELLINE),      // Select the current line
-    COMBO(combo_join_lines, JOINLN),        // Join lines like Vim's `J` command
-    COMBO(combo_search_selection, SRCHSEL), // Search selection
-    COMBO(combo_up_dir, UPDIR),             // Go up a directory: ../
+    // COMBO(combo_select_word, SELWORD),      // Select word
+    // COMBO(combo_select_line, SELLINE),      // Select the current line
+    // COMBO(combo_join_lines, JOINLN),        // Join lines like Vim's `J` command
+    // COMBO(combo_search_selection, SRCHSEL), // Search selection
+    // COMBO(combo_up_dir, UPDIR),             // Go up a directory: ../
 };
