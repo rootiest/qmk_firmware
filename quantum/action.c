@@ -270,6 +270,11 @@ void process_record(keyrecord_t *record) {
     if (IS_NOEVENT(record->event)) {
         return;
     }
+#ifdef SPECULATIVE_HOLD
+    if (record->event.pressed) {
+        speculative_key_settled(record);
+    }
+#endif // SPECULATIVE_HOLD
 
     if (!process_record_quantum(record)) {
 #ifndef NO_ACTION_ONESHOT
