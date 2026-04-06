@@ -62,3 +62,8 @@ qmk config user.keymap=via
 2. Implement features in `keyboards/keychron/q5_max/ansi_encoder/keymaps/via/`.
 3. Test compilation locally before committing.
 4. Ensure `rules.mk` has the necessary flags enabled (e.g., `TAP_DANCE_ENABLE = yes`, `UNICODE_ENABLE = yes`).
+
+## Git Conventions
+
+* Use conventional commits (`feat:`, `fix:`, `docs:`, `chore:`, etc.) scoped to the keyboard where relevant (e.g. `feat(q5_max):`).
+* Do **not** include `Co-Authored-By: Claude` trailers in commit messages.
