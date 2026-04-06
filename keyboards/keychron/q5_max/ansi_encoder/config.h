@@ -20,12 +20,10 @@
 /* RGB Matrix driver configuration */
 #    define RGB_MATRIX_LED_COUNT 101
 #    define DRIVER_COUNT 2
-#    define DRIVER_CS_PINS \
-        { B8, B9 }
+#    define DRIVER_CS_PINS {B8, B9}
 
 /* Set LED driver current */
-#    define SNLED27351_CURRENT_TUNE \
-        { 0x2C, 0x2C, 0x2C, 0x2C, 0x2C, 0x2C, 0x2C, 0x2C, 0x2C, 0x2C, 0x2C, 0x2C }
+#    define SNLED27351_CURRENT_TUNE {0x2C, 0x2C, 0x2C, 0x2C, 0x2C, 0x2C, 0x2C, 0x2C, 0x2C, 0x2C, 0x2C, 0x2C}
 
 /* Set to infinit, which is use in USB mode by default */
 #    define RGB_MATRIX_TIMEOUT RGB_MATRIX_TIMEOUT_INFINITE
@@ -37,10 +35,15 @@
 /* Indications */
 #    define NUM_LOCK_INDEX 32
 #    define CAPS_LOCK_INDEX 55
-#    define LOW_BAT_IND_INDEX \
-        { 92 }
+#    define LOW_BAT_IND_INDEX {92}
 
 #    define RGB_MATRIX_KEYPRESSES
 #    define RGB_MATRIX_FRAMEBUFFER_EFFECTS
 
 #endif
+
+/* Number of layers */
+#define DYNAMIC_KEYMAP_LAYER_COUNT 6
+
+/* Number of taps to toggle layer with TT */
+#define TAPPING_TOGGLE 3
