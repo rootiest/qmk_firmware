@@ -16,6 +16,7 @@
 
 #include QMK_KEYBOARD_H
 #include "keychron_common.h"
+#include "chord_unicode.h"
 
 // Tap Dance declarations
 enum {
@@ -26,6 +27,7 @@ enum {
 enum custom_keycodes {
     ALT_TAB_FWD = SAFE_RANGE, // Alt+Tab (forward)
     ALT_TAB_BWD,              // Alt+Shift+Tab (backward)
+    CHORD_KEY,                // Fn1+LeftAlt → chord/unicode entry mode
 };
 
 // Alt-Tab cycling state
@@ -58,7 +60,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_TAB,   KC_Q,     KC_W,     KC_E,     KC_R,     KC_T,     KC_Y,     KC_U,     KC_I,     KC_O,     KC_P,     KC_LBRC,    KC_RBRC,  KC_BSLS,            KC_PGDN,  KC_P7,    KC_P8,    KC_P9,
         KC_CAPS,  KC_A,     KC_S,     KC_D,     KC_F,     KC_G,     KC_H,     KC_J,     KC_K,     KC_L,     KC_SCLN,  KC_QUOT,              KC_ENT,             KC_END,   KC_P4,    KC_P5,    KC_P6,      KC_PPLS,
         KC_LSFT,            KC_Z,     KC_X,     KC_C,     KC_V,     KC_B,     KC_N,     KC_M,     KC_COMM,  KC_DOT,   KC_SLSH,              KC_RSFT,  KC_UP,              KC_P1,    KC_P2,    KC_P3,
-        KC_LCTL,  KC_LGUI,  KC_LALT,                               KC_SPC,                            TT(FN3), TG(FN1), OSL(KEEB_CTL),  KC_HOME,  KC_DOWN,  KC_END,                 KC_P0,    KC_PDOT,    KC_PENT),
+        KC_LCTL,  KC_LGUI,  CHORD_KEY,                             KC_SPC,                            TT(FN3), TG(FN1), OSL(KEEB_CTL),  KC_HOME,  KC_DOWN,  KC_END,                 KC_P0,    KC_PDOT,    KC_PENT),
 
     [FN2] = LAYOUT_ansi_101(
         KC_PWR,             KC_F13,   KC_F14,   KC_F15,   KC_F16,   KC_F17,   KC_F18,   KC_F19,   KC_F20,   KC_F21,   KC_F22,     KC_F23,   KC_F24,             KC_DEL,   KC_PSCR,  KC_CALC,  KC_FIND,    KC_MPLY,
@@ -105,10 +107,33 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][2] = {
 #endif // ENCODER_MAP_ENABLE
 
 // clang-format on
+
+void keyboard_post_init_user(void) {
+    chord_init();
+    // Use the Linux unicode input method (Ctrl+Shift+U → hex → Enter).
+    set_unicode_input_mode(UNICODE_MODE_LINUX);
+}
+
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (!process_record_keychron_common(keycode, record)) {
         return false;
     }
+
+    // Chord key: activate/deactivate chord unicode mode.
+    if (keycode == CHORD_KEY) {
+        if (record->event.pressed) {
+            chord_activate();
+        } else {
+            chord_key_released();
+        }
+        return false;
+    }
+
+    // While chord mode is active, let it consume the key event.
+    if (!process_chord(keycode, record)) {
+        return false;
+    }
+
     switch (keycode) {
         case ALT_TAB_FWD:
             if (record->event.pressed) {
@@ -141,6 +166,7 @@ void matrix_scan_user(void) {
         unregister_code(KC_LALT);
         alt_tab_active = false;
     }
+    chord_scan();
 }
 
 // Tap Dance definitions
