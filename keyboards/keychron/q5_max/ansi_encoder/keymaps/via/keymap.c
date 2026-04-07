@@ -178,6 +178,35 @@ void matrix_scan_user(void) {
     chord_scan();
 }
 
+// RGB Matrix Indicators --------------------------------------------------
+// ESC key (LED index 0) shows which layer is active at a glance.
+// BASE stays dark; each FN/control layer gets a distinct colour.
+#if defined(RGB_MATRIX_ENABLE)
+bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
+    switch (get_highest_layer(layer_state)) {
+        case FN1:
+            RGB_MATRIX_INDICATOR_SET_COLOR(0,   0, 128, 255); // blue
+            break;
+        case FN2:
+            RGB_MATRIX_INDICATOR_SET_COLOR(0,   0, 220,  80); // green
+            break;
+        case FN3:
+            RGB_MATRIX_INDICATOR_SET_COLOR(0, 255, 120,   0); // orange
+            break;
+        case FN4:
+            RGB_MATRIX_INDICATOR_SET_COLOR(0, 180,   0, 255); // purple
+            break;
+        case KEEB_CTL:
+            RGB_MATRIX_INDICATOR_SET_COLOR(0, 255,   0,   0); // red
+            break;
+        default: // BASE — keep ESC dark
+            RGB_MATRIX_INDICATOR_SET_COLOR(0,   0,   0,   0);
+            break;
+    }
+    return false;
+}
+#endif // RGB_MATRIX_ENABLE
+
 // Tap Dance definitions
 tap_dance_action_t tap_dance_actions[] = {
     // Tap once for Home, twice for End
