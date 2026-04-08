@@ -149,11 +149,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         return false;
     }
 
-    // CAPS_MOD handler added in Task 3; suppress unused-variable errors until then.
-    (void)caps_mod_held;
-    (void)caps_mod_ctrl_registered;
-    (void)caps_mod_timer;
-
     // Chord key: activate/deactivate chord unicode mode.
     if (keycode == CHORD_KEY) {
         if (record->event.pressed) {
@@ -170,6 +165,30 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     }
 
     switch (keycode) {
+        case CAPS_MOD:
+            if (record->event.pressed) {
+                caps_mod_held  = true;
+                caps_mod_timer = timer_read();
+            } else {
+                if (caps_mod_ctrl_registered) {
+                    unregister_code(KC_LCTL);
+                    caps_mod_ctrl_registered = false;
+                } else {
+                    uint8_t mods = get_mods();
+                    if (mods & MOD_MASK_GUI) {
+                        autocorrect_toggle();
+                    } else if (mods & MOD_MASK_ALT) {
+                        caps_word_toggle();
+                    } else if (mods & MOD_MASK_SHIFT) {
+                        tap_code(KC_CAPS);
+                    } else {
+                        tap_code(KC_ESC);
+                    }
+                }
+                caps_mod_held = false;
+            }
+            return false;
+
         case LCK_FN1:
         case LCK_FN2:
         case LCK_FN3:
@@ -228,6 +247,11 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 }
 
 void matrix_scan_user(void) {
+    if (caps_mod_held && !caps_mod_ctrl_registered
+        && timer_elapsed(caps_mod_timer) > TAPPING_TERM) {
+        caps_mod_ctrl_registered = true;
+        register_code(KC_LCTL);
+    }
     if (alt_tab_active && timer_elapsed(alt_tab_timer) > ALT_TAB_TIMEOUT) {
         unregister_code(KC_LALT);
         alt_tab_active = false;
