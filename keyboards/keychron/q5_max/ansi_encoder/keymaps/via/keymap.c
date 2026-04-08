@@ -180,12 +180,12 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                     } else if (mods & MOD_MASK_ALT) {
                         caps_word_toggle();
                     } else if (mods & MOD_MASK_SHIFT) {
-                        tap_code(KC_CAPS);
+                        tap_code(KC_CAPS); // Shift still held → host sees Shift+CapsLock (toggles on most OSes)
                     } else {
                         tap_code(KC_ESC);
                     }
                 }
-                caps_mod_held = false;
+                caps_mod_held = false; // cleared in both hold and tap paths
             }
             return false;
 
