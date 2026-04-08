@@ -28,12 +28,22 @@ enum custom_keycodes {
     ALT_TAB_FWD = SAFE_RANGE, // Alt+Tab (forward)
     ALT_TAB_BWD,              // Alt+Shift+Tab (backward)
     CHORD_KEY,                // Fn1+LeftAlt → chord/unicode entry mode
+    LCK_FN1,                  // Lock/unlock FN1
+    LCK_FN2,                  // Lock/unlock FN2
+    LCK_FN3,                  // Lock/unlock FN3
+    LCK_FN4,                  // Lock/unlock FN4
+    LCK_CTL,                  // Lock/unlock KEEB_CTL
+    LCK_BASE,                 // Clear all locks and return to BASE
 };
 
 // Alt-Tab cycling state
 static bool     alt_tab_active = false;
 static uint16_t alt_tab_timer  = 0;
 #define ALT_TAB_TIMEOUT 750 // ms to hold Alt after last encoder tick
+
+// Layer-lock state: bitmask of layers that should stay active even after
+// momentary (TT/MO) keys are released.
+static layer_state_t locked_layers = 0;
 
 enum layers {
     BASE,
@@ -56,7 +66,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [FN1] = LAYOUT_ansi_101(
         KC_SLEP,            KC_BRID,  KC_BRIU,  KC_MCTRL, KC_LNPAD, RGB_VAD,  RGB_VAI,  KC_MPRV,  KC_MPLY,  KC_MNXT,  KC_MUTE,    KC_VOLD,  KC_VOLU,            KC_DEL,   KC_PSCR,  KC_CALC,  KC_FIND,    KC_MUTE,
-        KC_GRV,   KC_1,     KC_2,     KC_3,     KC_4,     KC_5,     KC_6,     KC_7,     KC_8,     KC_9,     KC_0,     KC_MINS,    KC_EQL,   KC_BSPC,            KC_PGUP,  KC_NUM,   KC_PSLS,  KC_PAST,    KC_PMNS,
+        KC_GRV,  LCK_FN1, LCK_FN2,  LCK_FN3,  LCK_FN4, LCK_CTL,  KC_6,   KC_7,     KC_8,     KC_9,    LCK_BASE,  KC_MINS,    KC_EQL,   KC_BSPC,            KC_PGUP,  KC_NUM,   KC_PSLS,  KC_PAST,    KC_PMNS,
         KC_TAB,   KC_Q,     KC_W,     KC_E,     KC_R,     KC_T,     KC_Y,     KC_U,     KC_I,     KC_O,     KC_P,     KC_LBRC,    KC_RBRC,  KC_BSLS,            KC_PGDN,  KC_P7,    KC_P8,    KC_P9,
         KC_CAPS,  KC_A,     KC_S,     KC_D,     KC_F,     KC_G,     KC_H,     KC_J,     KC_K,     KC_L,     KC_SCLN,  KC_QUOT,              KC_ENT,             KC_END,   KC_P4,    KC_P5,    KC_P6,      KC_PPLS,
         KC_LSFT,            KC_Z,     KC_X,     KC_C,     KC_V,     KC_B,     KC_N,     KC_M,     KC_COMM,  KC_DOT,   KC_SLSH,              KC_RSFT,  KC_UP,              KC_P1,    KC_P2,    KC_P3,
@@ -64,7 +74,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [FN2] = LAYOUT_ansi_101(
         KC_PWR,             KC_F13,   KC_F14,   KC_F15,   KC_F16,   KC_F17,   KC_F18,   KC_F19,   KC_F20,   KC_F21,   KC_F22,     KC_F23,   KC_F24,             KC_DEL,   KC_PSCR,  KC_CALC,  KC_FIND,    KC_MPLY,
-        KC_GRV,   KC_1,     KC_2,     KC_3,     KC_4,     KC_5,     KC_6,     KC_7,     KC_8,     KC_9,     KC_0,     KC_MINS,    KC_EQL,   KC_BSPC,            KC_MS_WH_UP,  KC_NUM,   KC_PSLS,  KC_PAST,    KC_PMNS,
+        KC_GRV,  LCK_FN1, LCK_FN2,  LCK_FN3,  LCK_FN4, LCK_CTL,  KC_6,   KC_7,     KC_8,     KC_9,    LCK_BASE,  KC_MINS,    KC_EQL,   KC_BSPC,            KC_MS_WH_UP,  KC_NUM,   KC_PSLS,  KC_PAST,    KC_PMNS,
         KC_TAB,   KC_Q,     KC_W,     KC_E,     KC_R,     KC_T,     KC_Y,     KC_U,     KC_I,     KC_O,     KC_P,     KC_LBRC,    KC_RBRC,  KC_BSLS,           KC_MS_WH_DOWN, KC_P7,    KC_P8,    KC_P9,
         KC_CAPS,  KC_A,     KC_S,     KC_D,     KC_F,     KC_G,     KC_H,     KC_J,     KC_K,     KC_L,     KC_SCLN,  KC_QUOT,              KC_ENT,             KC_MS_BTN3,   KC_P4,    KC_P5,    KC_P6,      KC_PPLS,
         KC_LSFT,            KC_Z,     KC_X,     KC_C,     KC_V,     KC_B,     KC_N,     KC_M,     KC_COMM,  KC_DOT,   KC_SLSH,              KC_RSFT,  KC_MS_UP,               KC_P1,    KC_P2,    KC_P3,
@@ -72,7 +82,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [FN3] = LAYOUT_ansi_101(
         KC_ESC,             KC_BRID,  KC_BRIU,  KC_MCTRL, KC_LNPAD, RGB_VAD,  RGB_VAI,  KC_MPRV,  KC_MPLY,  KC_MNXT,  KC_MUTE,    KC_VOLD,  KC_VOLU,            KC_DEL,   KC_PSCR,  KC_CALC,  KC_FIND,     KC_MPLY,
-        KC_GRV,   KC_1,     KC_2,     KC_3,     KC_4,     KC_5,     KC_6,     KC_7,     KC_8,     KC_9,     KC_0,     KC_MINS,    KC_EQL,   KC_BSPC,            KC_PGUP,  KC_NUM,   KC_PSLS,  KC_PAST,    KC_PMNS,
+        KC_GRV,  LCK_FN1, LCK_FN2,  LCK_FN3,  LCK_FN4, LCK_CTL,  KC_6,   KC_7,     KC_8,     KC_9,    LCK_BASE,  KC_MINS,    KC_EQL,   KC_BSPC,            KC_PGUP,  KC_NUM,   KC_PSLS,  KC_PAST,    KC_PMNS,
         KC_TAB,   KC_Q,     KC_W,     KC_E,     KC_R,     KC_T,     KC_Y,     KC_U,     KC_I,     KC_O,     KC_P,     KC_LBRC,    KC_RBRC,  KC_BSLS,            KC_PGDN,  KC_P7,    KC_P8,    KC_P9,
         KC_CAPS,  KC_A,     KC_S,     KC_D,     KC_F,     KC_G,     KC_H,     KC_J,     KC_K,     KC_L,     KC_SCLN,  KC_QUOT,              KC_ENT,             TD(TD_HOME_END),  KC_P4,    KC_P5,    KC_P6,      KC_PPLS,
         KC_LSFT,            KC_Z,     KC_X,     KC_C,     KC_V,     KC_B,     KC_N,     KC_M,     KC_COMM,  KC_DOT,   KC_SLSH,              KC_RSFT,  KC_UP,              KC_P1,    KC_P2,    KC_P3,
@@ -80,7 +90,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [FN4] = LAYOUT_ansi_101(
         KC_ESC,             KC_BRID,  KC_BRIU,  KC_MCTRL, KC_LNPAD, RGB_VAD,  RGB_VAI,  KC_MPRV,  KC_MPLY,  KC_MNXT,  KC_MUTE,    KC_VOLD,  KC_VOLU,            KC_DEL,   KC_PSCR,  KC_CALC,  KC_FIND,    KC_MPLY,
-        KC_GRV,   KC_1,     KC_2,     KC_3,     KC_4,     KC_5,     KC_6,     KC_7,     KC_8,     KC_9,     KC_0,     KC_MINS,    KC_EQL,   KC_BSPC,            KC_PGUP,  KC_NUM,   KC_PSLS,  KC_PAST,    KC_PMNS,
+        KC_GRV,  LCK_FN1, LCK_FN2,  LCK_FN3,  LCK_FN4, LCK_CTL,  KC_6,   KC_7,     KC_8,     KC_9,    LCK_BASE,  KC_MINS,    KC_EQL,   KC_BSPC,            KC_PGUP,  KC_NUM,   KC_PSLS,  KC_PAST,    KC_PMNS,
         KC_TAB,   KC_Q,     KC_W,     KC_E,     KC_R,     KC_T,     KC_Y,     KC_U,     KC_I,     KC_O,     KC_P,     KC_LBRC,    KC_RBRC,  KC_BSLS,            KC_PGDN,  KC_P7,    KC_P8,    KC_P9,
         KC_CAPS,  KC_A,     KC_S,     KC_D,     KC_F,     KC_G,     KC_H,     KC_J,     KC_K,     KC_L,     KC_SCLN,  KC_QUOT,              KC_ENT,             TD(TD_HOME_END),  KC_P4,    KC_P5,    KC_P6,      KC_PPLS,
         KC_LSFT,            KC_Z,     KC_X,     KC_C,     KC_V,     KC_B,     KC_N,     KC_M,     KC_COMM,  KC_DOT,   KC_SLSH,              KC_RSFT,  KC_UP,              KC_P1,    KC_P2,    KC_P3,
@@ -88,7 +98,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [KEEB_CTL] = LAYOUT_ansi_101(
         _______,            KC_BRID,  KC_BRIU,  KC_TASK,  KC_FILE,  RGB_VAD,  RGB_VAI,  KC_MPRV,  KC_MPLY,  KC_MNXT,  KC_MUTE,    KC_VOLD,  KC_VOLU,            _______,  _______,  _______,  _______,    RGB_TOG,
-        _______,  BT_HST1,  BT_HST2,  BT_HST3,  P2P4G,    _______,  _______,  _______,  _______,  _______,  _______,  _______,    _______,  _______,            _______,  _______,  _______,  _______,    _______,
+        _______,  BT_HST1,  BT_HST2,  BT_HST3,  P2P4G,    _______,  _______,  _______,  _______,  _______, LCK_BASE,  _______,    _______,  _______,            _______,  _______,  _______,  _______,    _______,
         RGB_TOG,  RGB_MOD,  RGB_VAI,  RGB_HUI,  RGB_SAI,  RGB_SPI,  _______,  _______,  _______,  _______,  _______,  _______,    _______,  _______,            _______,  _______,  _______,  _______,
         _______,  RGB_RMOD, RGB_VAD,  RGB_HUD,  RGB_SAD,  RGB_SPD,  _______,  _______,  _______,  _______,  _______,  _______,              _______,            KC_END,   _______,  _______,  _______,    _______,
         _______,            _______,  _______,  _______,  _______,  BAT_LVL,  NK_TOGG,  _______,  _______,  _______,  _______,              _______,  _______,            _______,  _______,  _______,
@@ -113,9 +123,14 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][2] = {
 // COMBO_ONLY_FROM_LAYER 0 (config.h) ensures these keycodes are always
 // resolved from BASE so the combo fires regardless of the active layer.
 const uint16_t PROGMEM fallback_combo[] = {KC_COMM, KC_DOT, KC_SLSH, COMBO_END};
-combo_t key_combos[] = {
+combo_t                key_combos[]     = {
     COMBO(fallback_combo, TO(BASE)),
 };
+
+// Re-assert locked layers whenever QMK modifies layer state (e.g. TT release).
+layer_state_t layer_state_set_user(layer_state_t state) {
+    return state | locked_layers;
+}
 
 void keyboard_post_init_user(void) {
     chord_init();
@@ -144,6 +159,37 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     }
 
     switch (keycode) {
+        case LCK_FN1:
+        case LCK_FN2:
+        case LCK_FN3:
+        case LCK_FN4:
+        case LCK_CTL:
+        case LCK_BASE:
+            if (record->event.pressed) {
+                uint8_t target;
+                switch (keycode) {
+                    case LCK_FN1:  target = FN1;       break;
+                    case LCK_FN2:  target = FN2;       break;
+                    case LCK_FN3:  target = FN3;       break;
+                    case LCK_FN4:  target = FN4;       break;
+                    case LCK_CTL:  target = KEEB_CTL;  break;
+                    default:       target = BASE;      break;
+                }
+                if (target != BASE && (locked_layers & (1UL << target))) {
+                    // Already locked on this layer — unlock and return to BASE.
+                    locked_layers = 0;
+                    layer_move(BASE);
+                } else {
+                    // Lock the target layer (clears any other lock first).
+                    locked_layers = 0;
+                    layer_move(target);
+                    if (target != BASE) {
+                        locked_layers = (1UL << target);
+                    }
+                }
+            }
+            return false;
+
         case ALT_TAB_FWD:
             if (record->event.pressed) {
                 if (!alt_tab_active) {
@@ -185,22 +231,22 @@ void matrix_scan_user(void) {
 bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
     switch (get_highest_layer(layer_state)) {
         case FN1:
-            RGB_MATRIX_INDICATOR_SET_COLOR(0,   0, 128, 255); // blue
+            RGB_MATRIX_INDICATOR_SET_COLOR(0, 0, 128, 255); // blue
             break;
         case FN2:
-            RGB_MATRIX_INDICATOR_SET_COLOR(0,   0, 220,  80); // green
+            RGB_MATRIX_INDICATOR_SET_COLOR(0, 0, 220, 80); // green
             break;
         case FN3:
-            RGB_MATRIX_INDICATOR_SET_COLOR(0, 255, 120,   0); // orange
+            RGB_MATRIX_INDICATOR_SET_COLOR(0, 255, 120, 0); // orange
             break;
         case FN4:
-            RGB_MATRIX_INDICATOR_SET_COLOR(0, 180,   0, 255); // purple
+            RGB_MATRIX_INDICATOR_SET_COLOR(0, 180, 0, 255); // purple
             break;
         case KEEB_CTL:
-            RGB_MATRIX_INDICATOR_SET_COLOR(0, 255,   0,   0); // red
+            RGB_MATRIX_INDICATOR_SET_COLOR(0, 255, 0, 0); // red
             break;
         default: // BASE — keep ESC dark
-            RGB_MATRIX_INDICATOR_SET_COLOR(0,   0,   0,   0);
+            RGB_MATRIX_INDICATOR_SET_COLOR(0, 0, 0, 0);
             break;
     }
     return false;
