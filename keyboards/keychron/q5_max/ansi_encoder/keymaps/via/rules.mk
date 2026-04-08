@@ -2,4 +2,6 @@ VIA_ENABLE = yes
 TAP_DANCE_ENABLE = yes
 UNICODE_ENABLE = yes
 COMBO_ENABLE = yes
+CAPS_WORD_ENABLE = yes
+AUTOCORRECT_ENABLE = yes
 SRC += chord_unicode.c
