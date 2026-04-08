@@ -284,6 +284,18 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
             RGB_MATRIX_INDICATOR_SET_COLOR(0, 0, 0, 0);
             break;
     }
+
+    // Caps Lock key (LED 55): shows CapsWord/Autocorrect/CapsLock state.
+    if (is_caps_word_on()) {
+        RGB_MATRIX_INDICATOR_SET_COLOR(55, 0, 200, 0);     // green: Caps Word active
+    } else if (autocorrect_is_enabled()) {
+        RGB_MATRIX_INDICATOR_SET_COLOR(55, 150, 0, 255);   // purple: Autocorrect active
+    } else if (host_keyboard_led_state().caps_lock) {
+        RGB_MATRIX_INDICATOR_SET_COLOR(55, 255, 255, 255); // white: normal Caps Lock on
+    } else {
+        RGB_MATRIX_INDICATOR_SET_COLOR(55, 0, 0, 0);       // off
+    }
+
     return false;
 }
 #endif // RGB_MATRIX_ENABLE
