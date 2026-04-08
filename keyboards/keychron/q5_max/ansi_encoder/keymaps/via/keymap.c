@@ -149,8 +149,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         return false;
     }
 
-    // CAPS_MOD logic will be handled here in Task 3.
-    // For now, we reference the state variables to suppress unused variable warnings.
+    // CAPS_MOD handler added in Task 3; suppress unused-variable errors until then.
     (void)caps_mod_held;
     (void)caps_mod_ctrl_registered;
     (void)caps_mod_timer;
