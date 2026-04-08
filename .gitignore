@@ -114,3 +114,5 @@ via*.json
 
 # Keep firmware file
 !keyboards/keychron/*/firmware/*.bin
+/.claude_session
+/.remember/tmp/save-session.pid
