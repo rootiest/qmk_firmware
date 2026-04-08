@@ -34,6 +34,7 @@ enum custom_keycodes {
     LCK_FN4,                  // Lock/unlock FN4
     LCK_CTL,                  // Lock/unlock KEEB_CTL
     LCK_BASE,                 // Clear all locks and return to BASE
+    CAPS_MOD,                 // Tap=ESC, hold=Ctrl, Shift=CapsLock, Alt=CapsWord, GUI=Autocorrect
 };
 
 // Alt-Tab cycling state
@@ -44,6 +45,11 @@ static uint16_t alt_tab_timer  = 0;
 // Layer-lock state: bitmask of layers that should stay active even after
 // momentary (TT/MO) keys are released.
 static layer_state_t locked_layers = 0;
+
+// CAPS_MOD state: tap=ESC, hold=Ctrl, Shift+tap=CapsLock, Alt+tap=CapsWord, GUI+tap=Autocorrect
+static bool     caps_mod_held            = false;
+static bool     caps_mod_ctrl_registered = false;
+static uint16_t caps_mod_timer           = 0;
 
 enum layers {
     BASE,
@@ -60,7 +66,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_ESC,             KC_F1,    KC_F2,    KC_F3,    KC_F4,    KC_F5,    KC_F6,    KC_F7,    KC_F8,    KC_F9,    KC_F10,     KC_F11,   KC_F12,             KC_DEL,   KC_PSCR,  KC_CALC,  KC_FIND,    KC_MPLY,
         KC_GRV,   KC_1,     KC_2,     KC_3,     KC_4,     KC_5,     KC_6,     KC_7,     KC_8,     KC_9,     KC_0,     KC_MINS,    KC_EQL,   KC_BSPC,            KC_PGUP,  KC_NUM,   KC_PSLS,  KC_PAST,    KC_PMNS,
         KC_TAB,   KC_Q,     KC_W,     KC_E,     KC_R,     KC_T,     KC_Y,     KC_U,     KC_I,     KC_O,     KC_P,     KC_LBRC,    KC_RBRC,  KC_BSLS,            KC_PGDN,  KC_P7,    KC_P8,    KC_P9,
-        KC_CAPS,  KC_A,     KC_S,     KC_D,     KC_F,     KC_G,     KC_H,     KC_J,     KC_K,     KC_L,     KC_SCLN,  KC_QUOT,              KC_ENT,             TD(TD_HOME_END),  KC_P4,    KC_P5,    KC_P6,      KC_PPLS,
+        CAPS_MOD, KC_A,     KC_S,     KC_D,     KC_F,     KC_G,     KC_H,     KC_J,     KC_K,     KC_L,     KC_SCLN,  KC_QUOT,              KC_ENT,             TD(TD_HOME_END),  KC_P4,    KC_P5,    KC_P6,      KC_PPLS,
         KC_LSFT,            KC_Z,     KC_X,     KC_C,     KC_V,     KC_B,     KC_N,     KC_M,     KC_COMM,  KC_DOT,   KC_SLSH,              KC_RSFT,  KC_UP,              KC_P1,    KC_P2,    KC_P3,
         KC_LCTL,  KC_LGUI,  KC_LALT,                                KC_SPC,                                 TT(FN2), TT(FN1), KC_RCTL,  KC_LEFT,  KC_DOWN,  KC_RGHT,            KC_P0,    KC_PDOT,    KC_PENT),
 
@@ -68,7 +74,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_SLEP,            KC_BRID,  KC_BRIU,  KC_MCTRL, KC_LNPAD, RGB_VAD,  RGB_VAI,  KC_MPRV,  KC_MPLY,  KC_MNXT,  KC_MUTE,    KC_VOLD,  KC_VOLU,            KC_DEL,   KC_PSCR,  KC_CALC,  KC_FIND,    KC_MUTE,
         KC_GRV,  LCK_FN1, LCK_FN2,  LCK_FN3,  LCK_FN4, LCK_CTL,  KC_6,   KC_7,     KC_8,     KC_9,    LCK_BASE,  KC_MINS,    KC_EQL,   KC_BSPC,            KC_PGUP,  KC_NUM,   KC_PSLS,  KC_PAST,    KC_PMNS,
         KC_TAB,   KC_Q,     KC_W,     KC_E,     KC_R,     KC_T,     KC_Y,     KC_U,     KC_I,     KC_O,     KC_P,     KC_LBRC,    KC_RBRC,  KC_BSLS,            KC_PGDN,  KC_P7,    KC_P8,    KC_P9,
-        KC_CAPS,  KC_A,     KC_S,     KC_D,     KC_F,     KC_G,     KC_H,     KC_J,     KC_K,     KC_L,     KC_SCLN,  KC_QUOT,              KC_ENT,             KC_END,   KC_P4,    KC_P5,    KC_P6,      KC_PPLS,
+        CAPS_MOD, KC_A,     KC_S,     KC_D,     KC_F,     KC_G,     KC_H,     KC_J,     KC_K,     KC_L,     KC_SCLN,  KC_QUOT,              KC_ENT,             KC_END,   KC_P4,    KC_P5,    KC_P6,      KC_PPLS,
         KC_LSFT,            KC_Z,     KC_X,     KC_C,     KC_V,     KC_B,     KC_N,     KC_M,     KC_COMM,  KC_DOT,   KC_SLSH,              KC_RSFT,  KC_UP,              KC_P1,    KC_P2,    KC_P3,
         KC_LCTL,  KC_LGUI,  CHORD_KEY,                             KC_SPC,                            TT(FN3), TG(FN1), OSL(KEEB_CTL),  KC_HOME,  KC_DOWN,  KC_END,                 KC_P0,    KC_PDOT,    KC_PENT),
 
@@ -76,7 +82,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_PWR,             KC_F13,   KC_F14,   KC_F15,   KC_F16,   KC_F17,   KC_F18,   KC_F19,   KC_F20,   KC_F21,   KC_F22,     KC_F23,   KC_F24,             KC_DEL,   KC_PSCR,  KC_CALC,  KC_FIND,    KC_MPLY,
         KC_GRV,  LCK_FN1, LCK_FN2,  LCK_FN3,  LCK_FN4, LCK_CTL,  KC_6,   KC_7,     KC_8,     KC_9,    LCK_BASE,  KC_MINS,    KC_EQL,   KC_BSPC,            KC_MS_WH_UP,  KC_NUM,   KC_PSLS,  KC_PAST,    KC_PMNS,
         KC_TAB,   KC_Q,     KC_W,     KC_E,     KC_R,     KC_T,     KC_Y,     KC_U,     KC_I,     KC_O,     KC_P,     KC_LBRC,    KC_RBRC,  KC_BSLS,           KC_MS_WH_DOWN, KC_P7,    KC_P8,    KC_P9,
-        KC_CAPS,  KC_A,     KC_S,     KC_D,     KC_F,     KC_G,     KC_H,     KC_J,     KC_K,     KC_L,     KC_SCLN,  KC_QUOT,              KC_ENT,             KC_MS_BTN3,   KC_P4,    KC_P5,    KC_P6,      KC_PPLS,
+        CAPS_MOD, KC_A,     KC_S,     KC_D,     KC_F,     KC_G,     KC_H,     KC_J,     KC_K,     KC_L,     KC_SCLN,  KC_QUOT,              KC_ENT,             KC_MS_BTN3,   KC_P4,    KC_P5,    KC_P6,      KC_PPLS,
         KC_LSFT,            KC_Z,     KC_X,     KC_C,     KC_V,     KC_B,     KC_N,     KC_M,     KC_COMM,  KC_DOT,   KC_SLSH,              KC_RSFT,  KC_MS_UP,               KC_P1,    KC_P2,    KC_P3,
         KC_LCTL,  KC_LGUI,  KC_LALT,                               KC_SPC,                                 TG(FN2), TT(FN4), KC_RCTL,  KC_MS_LEFT,  KC_MS_DOWN,  KC_MS_RIGHT, KC_MS_BTN1,    KC_MS_BTN2,    KC_PENT),
 
@@ -84,7 +90,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_ESC,             KC_BRID,  KC_BRIU,  KC_MCTRL, KC_LNPAD, RGB_VAD,  RGB_VAI,  KC_MPRV,  KC_MPLY,  KC_MNXT,  KC_MUTE,    KC_VOLD,  KC_VOLU,            KC_DEL,   KC_PSCR,  KC_CALC,  KC_FIND,     KC_MPLY,
         KC_GRV,  LCK_FN1, LCK_FN2,  LCK_FN3,  LCK_FN4, LCK_CTL,  KC_6,   KC_7,     KC_8,     KC_9,    LCK_BASE,  KC_MINS,    KC_EQL,   KC_BSPC,            KC_PGUP,  KC_NUM,   KC_PSLS,  KC_PAST,    KC_PMNS,
         KC_TAB,   KC_Q,     KC_W,     KC_E,     KC_R,     KC_T,     KC_Y,     KC_U,     KC_I,     KC_O,     KC_P,     KC_LBRC,    KC_RBRC,  KC_BSLS,            KC_PGDN,  KC_P7,    KC_P8,    KC_P9,
-        KC_CAPS,  KC_A,     KC_S,     KC_D,     KC_F,     KC_G,     KC_H,     KC_J,     KC_K,     KC_L,     KC_SCLN,  KC_QUOT,              KC_ENT,             TD(TD_HOME_END),  KC_P4,    KC_P5,    KC_P6,      KC_PPLS,
+        CAPS_MOD, KC_A,     KC_S,     KC_D,     KC_F,     KC_G,     KC_H,     KC_J,     KC_K,     KC_L,     KC_SCLN,  KC_QUOT,              KC_ENT,             TD(TD_HOME_END),  KC_P4,    KC_P5,    KC_P6,      KC_PPLS,
         KC_LSFT,            KC_Z,     KC_X,     KC_C,     KC_V,     KC_B,     KC_N,     KC_M,     KC_COMM,  KC_DOT,   KC_SLSH,              KC_RSFT,  KC_UP,              KC_P1,    KC_P2,    KC_P3,
         KC_LCTL,  KC_LGUI,  KC_LALT,                               KC_SPC,                                 TG(FN3), TT(FN4), KC_RCTL,  KC_LEFT,  KC_DOWN,  KC_RGHT,       KC_P0,    KC_PDOT,    KC_PENT),
 
@@ -92,7 +98,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_ESC,             KC_BRID,  KC_BRIU,  KC_MCTRL, KC_LNPAD, RGB_VAD,  RGB_VAI,  KC_MPRV,  KC_MPLY,  KC_MNXT,  KC_MUTE,    KC_VOLD,  KC_VOLU,            KC_DEL,   KC_PSCR,  KC_CALC,  KC_FIND,    KC_MPLY,
         KC_GRV,  LCK_FN1, LCK_FN2,  LCK_FN3,  LCK_FN4, LCK_CTL,  KC_6,   KC_7,     KC_8,     KC_9,    LCK_BASE,  KC_MINS,    KC_EQL,   KC_BSPC,            KC_PGUP,  KC_NUM,   KC_PSLS,  KC_PAST,    KC_PMNS,
         KC_TAB,   KC_Q,     KC_W,     KC_E,     KC_R,     KC_T,     KC_Y,     KC_U,     KC_I,     KC_O,     KC_P,     KC_LBRC,    KC_RBRC,  KC_BSLS,            KC_PGDN,  KC_P7,    KC_P8,    KC_P9,
-        KC_CAPS,  KC_A,     KC_S,     KC_D,     KC_F,     KC_G,     KC_H,     KC_J,     KC_K,     KC_L,     KC_SCLN,  KC_QUOT,              KC_ENT,             TD(TD_HOME_END),  KC_P4,    KC_P5,    KC_P6,      KC_PPLS,
+        CAPS_MOD, KC_A,     KC_S,     KC_D,     KC_F,     KC_G,     KC_H,     KC_J,     KC_K,     KC_L,     KC_SCLN,  KC_QUOT,              KC_ENT,             TD(TD_HOME_END),  KC_P4,    KC_P5,    KC_P6,      KC_PPLS,
         KC_LSFT,            KC_Z,     KC_X,     KC_C,     KC_V,     KC_B,     KC_N,     KC_M,     KC_COMM,  KC_DOT,   KC_SLSH,              KC_RSFT,  KC_UP,              KC_P1,    KC_P2,    KC_P3,
         KC_LCTL,  KC_LGUI,  KC_LALT,                               KC_SPC,                                 TO(BASE), TG(FN4), KC_RCTL,  KC_LEFT,  KC_DOWN,  KC_RGHT,      KC_P0,    KC_PDOT,    KC_PENT),
 
@@ -159,6 +165,30 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     }
 
     switch (keycode) {
+        case CAPS_MOD:
+            if (record->event.pressed) {
+                caps_mod_held  = true;
+                caps_mod_timer = timer_read();
+            } else {
+                if (caps_mod_ctrl_registered) {
+                    unregister_code(KC_LCTL);
+                    caps_mod_ctrl_registered = false;
+                } else {
+                    uint8_t mods = get_mods();
+                    if (mods & MOD_MASK_GUI) {
+                        autocorrect_toggle();
+                    } else if (mods & MOD_MASK_ALT) {
+                        caps_word_toggle();
+                    } else if (mods & MOD_MASK_SHIFT) {
+                        tap_code(KC_CAPS); // Shift still held → host sees Shift+CapsLock (toggles on most OSes)
+                    } else {
+                        tap_code(KC_ESC);
+                    }
+                }
+                caps_mod_held = false; // cleared in both hold and tap paths
+            }
+            return false;
+
         case LCK_FN1:
         case LCK_FN2:
         case LCK_FN3:
@@ -217,6 +247,11 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 }
 
 void matrix_scan_user(void) {
+    if (caps_mod_held && !caps_mod_ctrl_registered
+        && timer_elapsed(caps_mod_timer) > TAPPING_TERM) {
+        caps_mod_ctrl_registered = true;
+        register_code(KC_LCTL);
+    }
     if (alt_tab_active && timer_elapsed(alt_tab_timer) > ALT_TAB_TIMEOUT) {
         unregister_code(KC_LALT);
         alt_tab_active = false;
@@ -249,6 +284,18 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
             RGB_MATRIX_INDICATOR_SET_COLOR(0, 0, 0, 0);
             break;
     }
+
+    // Caps Lock key (LED 55): shows CapsWord/Autocorrect/CapsLock state.
+    if (is_caps_word_on()) {
+        RGB_MATRIX_INDICATOR_SET_COLOR(55, 0, 200, 0);     // green: Caps Word active
+    } else if (!autocorrect_is_enabled()) {
+        RGB_MATRIX_INDICATOR_SET_COLOR(55, 150, 0, 255);   // purple: Autocorrect disabled
+    } else if (host_keyboard_led_state().caps_lock) {
+        RGB_MATRIX_INDICATOR_SET_COLOR(55, 255, 255, 255); // white: normal Caps Lock on
+    } else {
+        RGB_MATRIX_INDICATOR_SET_COLOR(55, 0, 0, 0);       // off
+    }
+
     return false;
 }
 #endif // RGB_MATRIX_ENABLE
