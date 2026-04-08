@@ -67,3 +67,7 @@ qmk config user.keymap=via
 
 * Use conventional commits (`feat:`, `fix:`, `docs:`, `chore:`, etc.) scoped to the keyboard where relevant (e.g. `feat(q5_max):`).
 * Do **not** include `Co-Authored-By: Claude` trailers in commit messages.
+
+### Chained / Stacked PRs
+
+When merging a chain of PRs (e.g. `A → main`, `B → A`, `C → B`), always **delete the branch after each merge**. Gitea (and GitHub) will automatically retarget any open PRs pointing at the deleted branch to the branch it was merged into. This keeps the chain collapsing cleanly into `main` without manual retargeting or cleanup PRs.
