@@ -169,6 +169,16 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             if (record->event.pressed) {
                 caps_mod_held  = true;
                 caps_mod_timer = timer_read();
+                // If a real modifier is held, send a dummy key so the OS sees
+                // modifier+key rather than a bare modifier hold/tap. Without
+                // this, the OS never receives any keycode while the modifier is
+                // down and treats the eventual modifier release as a tap (e.g.
+                // GUI opening the app menu). KC_F24 is harmless and universally
+                // ignored by applications.
+                if (get_mods() & (MOD_MASK_GUI | MOD_MASK_ALT | MOD_MASK_SHIFT)) {
+                    register_code(KC_F24);
+                    unregister_code(KC_F24);
+                }
             } else {
                 if (caps_mod_ctrl_registered) {
                     unregister_code(KC_LCTL);
@@ -176,14 +186,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 } else {
                     uint8_t mods = get_mods();
                     if (mods & MOD_MASK_GUI) {
-                        // Clear GUI before acting so the OS doesn't see a GUI tap
-                        del_mods(MOD_MASK_GUI);
-                        send_keyboard_report();
                         autocorrect_toggle();
                     } else if (mods & MOD_MASK_ALT) {
-                        // Clear Alt before acting so the OS doesn't see an Alt tap
-                        del_mods(MOD_MASK_ALT);
-                        send_keyboard_report();
                         caps_word_toggle();
                     } else if (mods & MOD_MASK_SHIFT) {
                         tap_code(KC_CAPS); // Shift still held → host sees Shift+CapsLock (toggles on most OSes)
