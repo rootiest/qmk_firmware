@@ -176,8 +176,14 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 } else {
                     uint8_t mods = get_mods();
                     if (mods & MOD_MASK_GUI) {
+                        // Clear GUI before acting so the OS doesn't see a GUI tap
+                        del_mods(MOD_MASK_GUI);
+                        send_keyboard_report();
                         autocorrect_toggle();
                     } else if (mods & MOD_MASK_ALT) {
+                        // Clear Alt before acting so the OS doesn't see an Alt tap
+                        del_mods(MOD_MASK_ALT);
+                        send_keyboard_report();
                         caps_word_toggle();
                     } else if (mods & MOD_MASK_SHIFT) {
                         tap_code(KC_CAPS); // Shift still held → host sees Shift+CapsLock (toggles on most OSes)
