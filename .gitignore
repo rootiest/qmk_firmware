@@ -117,3 +117,4 @@ via*.json
 /.claude_session
 /.remember/tmp/save-session.pid
 /.direnv/CACHEDIR.TAG
+/.gemini_session
