@@ -63,3 +63,17 @@ enum {
     REPORT_RATE_GET,
     REPORT_RATE_SET,
 };
+
+/**
+ * Keyboard-level Raw HID extension hook.
+ *
+ * Called by kc_raw_hid_rx() for any command ID not handled by Keychron's own
+ * protocol (0xA0-0xAB range).  The default weak implementation returns false
+ * so that unrecognised commands fall through to VIA.
+ *
+ * Override this in your keymap to handle custom command IDs without
+ * conflicting with Keychron's via_command_kb() definition.
+ * Return true if the packet was fully handled (including calling
+ * raw_hid_send() if a reply is needed), false to let VIA process it.
+ */
+bool kc_raw_hid_rx_kb(uint8_t *data, uint8_t length);

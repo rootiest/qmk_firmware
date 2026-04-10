@@ -81,6 +81,14 @@
 #define HID_APP_NAME_MAX 28u
 
 // ---------------------------------------------------------------------------
+// Packet size
+// ---------------------------------------------------------------------------
+// Matches RAW_EPSIZE (QMK raw HID endpoint size = 32 bytes).  Defined here
+// so keymap code does not depend on usb_descriptor.h being in scope, which
+// it is not when compiled through Keychron's build path.
+#define HID_PACKET_SIZE 32u
+
+// ---------------------------------------------------------------------------
 // Convenience: first byte of payload as an absolute packet index
 // ---------------------------------------------------------------------------
 #define HID_PAYLOAD(offset) ((uint8_t)((HID_OFF_PAYLOAD) + (offset)))

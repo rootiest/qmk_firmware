@@ -18,6 +18,7 @@
 #include "keychron_common.h"
 #include "chord_unicode.h"
 #include "raw_hid.h"
+#include "keychron_raw_hid.h"
 #include "hid_protocol.h"
 
 // Tap Dance declarations
@@ -77,18 +78,20 @@ static uint8_t g_hid_brightness = 0;
 
 // Send the current layer state to the host / bridge application.
 static void hid_send_layer_sync(uint8_t layer, uint8_t locked_mask) {
-    uint8_t data[RAW_EPSIZE] = {0};
+    uint8_t data[HID_PACKET_SIZE] = {0};
     data[HID_OFF_CMD]                           = HID_CMD_LAYER_SYNC;
     data[HID_OFF_SRC]                           = HID_DEV_Q5MAX;
     data[HID_OFF_FLAGS]                         = 0;
     data[HID_PAYLOAD(HID_LAYER_OFF_ACTIVE)]     = layer;
     data[HID_PAYLOAD(HID_LAYER_OFF_LOCKED)]     = locked_mask;
-    raw_hid_send(data, RAW_EPSIZE);
+    raw_hid_send(data, HID_PACKET_SIZE);
 }
 
 // Handle a Raw HID packet for our custom command range (0x40-0x7E).
-// Called from via_command_kb(); must call raw_hid_send() for any reply.
-bool via_command_kb(uint8_t *data, uint8_t length) {
+// Overrides the weak kc_raw_hid_rx_kb() hook in keychron_raw_hid.c, which is
+// called by kc_raw_hid_rx() for any command ID not handled by Keychron's own
+// protocol.  Must call raw_hid_send() directly for any reply.
+bool kc_raw_hid_rx_kb(uint8_t *data, uint8_t length) {
     uint8_t cmd = data[HID_OFF_CMD];
 
     // Only intercept our custom command range; let VIA handle everything else.
@@ -102,13 +105,13 @@ bool via_command_kb(uint8_t *data, uint8_t length) {
         case HID_CMD_LAYER_SYNC: {
             if (flags & HID_FLAG_QUERY) {
                 // Host requests current state — reply without changing anything.
-                uint8_t resp[RAW_EPSIZE] = {0};
+                uint8_t resp[HID_PACKET_SIZE] = {0};
                 resp[HID_OFF_CMD]                       = HID_CMD_LAYER_SYNC;
                 resp[HID_OFF_SRC]                       = HID_DEV_Q5MAX;
                 resp[HID_OFF_FLAGS]                     = HID_FLAG_RESPONSE;
                 resp[HID_PAYLOAD(HID_LAYER_OFF_ACTIVE)] = get_highest_layer(layer_state);
                 resp[HID_PAYLOAD(HID_LAYER_OFF_LOCKED)] = (uint8_t)locked_layers;
-                raw_hid_send(resp, RAW_EPSIZE);
+                raw_hid_send(resp, HID_PACKET_SIZE);
             } else {
                 // Host or peer keyboard is pushing a new active layer.
                 uint8_t new_layer  = data[HID_PAYLOAD(HID_LAYER_OFF_ACTIVE)];
