@@ -17,6 +17,8 @@
 #include QMK_KEYBOARD_H
 #include "keychron_common.h"
 #include "chord_unicode.h"
+#include "raw_hid.h"
+#include "hid_protocol.h"
 
 // Tap Dance declarations
 enum {
@@ -37,6 +39,16 @@ enum custom_keycodes {
     CAPS_MOD,                 // Tap=ESC, hold=Ctrl, Shift=CapsLock, Alt=CapsWord, GUI=Autocorrect
 };
 
+// Declare layers early so the HID functions below can reference KEEB_CTL.
+enum layers {
+    BASE,
+    FN1,
+    FN2,
+    FN3,
+    FN4,
+    KEEB_CTL,
+};
+
 // Alt-Tab cycling state
 static bool     alt_tab_active = false;
 static uint16_t alt_tab_timer  = 0;
@@ -46,19 +58,106 @@ static uint16_t alt_tab_timer  = 0;
 // momentary (TT/MO) keys are released.
 static layer_state_t locked_layers = 0;
 
+// ---------------------------------------------------------------------------
+// Raw HID state
+// ---------------------------------------------------------------------------
+
+// Anti-loop guard: set to true while applying a layer change that arrived
+// over HID so that layer_state_set_user() does not echo it back.
+static bool g_hid_recv_active = false;
+
+// Last highest-layer value we sent via HID.  0xFF = never sent.
+// Avoids redundant sends when layer_state_set_user is called multiple times
+// with the same effective top layer.
+static uint8_t g_last_sent_layer = 0xFF;
+
+// Latest host-reported values (stored for future RGB indicator use).
+static uint8_t g_hid_volume     = 0;
+static uint8_t g_hid_brightness = 0;
+
+// Send the current layer state to the host / bridge application.
+static void hid_send_layer_sync(uint8_t layer, uint8_t locked_mask) {
+    uint8_t data[RAW_EPSIZE] = {0};
+    data[HID_OFF_CMD]                           = HID_CMD_LAYER_SYNC;
+    data[HID_OFF_SRC]                           = HID_DEV_Q5MAX;
+    data[HID_OFF_FLAGS]                         = 0;
+    data[HID_PAYLOAD(HID_LAYER_OFF_ACTIVE)]     = layer;
+    data[HID_PAYLOAD(HID_LAYER_OFF_LOCKED)]     = locked_mask;
+    raw_hid_send(data, RAW_EPSIZE);
+}
+
+// Handle a Raw HID packet for our custom command range (0x40-0x7E).
+// Called from via_command_kb(); must call raw_hid_send() for any reply.
+bool via_command_kb(uint8_t *data, uint8_t length) {
+    uint8_t cmd = data[HID_OFF_CMD];
+
+    // Only intercept our custom command range; let VIA handle everything else.
+    if (cmd < 0x40u || cmd > 0x7Eu) {
+        return false;
+    }
+
+    uint8_t flags = data[HID_OFF_FLAGS];
+
+    switch (cmd) {
+        case HID_CMD_LAYER_SYNC: {
+            if (flags & HID_FLAG_QUERY) {
+                // Host requests current state — reply without changing anything.
+                uint8_t resp[RAW_EPSIZE] = {0};
+                resp[HID_OFF_CMD]                       = HID_CMD_LAYER_SYNC;
+                resp[HID_OFF_SRC]                       = HID_DEV_Q5MAX;
+                resp[HID_OFF_FLAGS]                     = HID_FLAG_RESPONSE;
+                resp[HID_PAYLOAD(HID_LAYER_OFF_ACTIVE)] = get_highest_layer(layer_state);
+                resp[HID_PAYLOAD(HID_LAYER_OFF_LOCKED)] = (uint8_t)locked_layers;
+                raw_hid_send(resp, RAW_EPSIZE);
+            } else {
+                // Host or peer keyboard is pushing a new active layer.
+                uint8_t new_layer  = data[HID_PAYLOAD(HID_LAYER_OFF_ACTIVE)];
+                uint8_t new_locked = data[HID_PAYLOAD(HID_LAYER_OFF_LOCKED)];
+                if (new_layer <= KEEB_CTL) {
+                    // Set the guard BEFORE calling layer_move() so that the
+                    // resulting layer_state_set_user() call does not echo the
+                    // change back to the host, preventing an infinite loop.
+                    g_hid_recv_active = true;
+                    locked_layers     = new_locked;
+                    layer_move(new_layer);
+                    g_hid_recv_active = false;
+                }
+            }
+            break;
+        }
+
+        case HID_CMD_VOLUME: {
+            // Store the host-reported volume (0-100).
+            g_hid_volume = data[HID_PAYLOAD(HID_VOLUME_OFF_LEVEL)];
+            // TODO: drive an RGB volume-bar indicator here in a future commit.
+            break;
+        }
+
+        case HID_CMD_BRIGHTNESS: {
+            // Store the host-reported screen brightness (0-100).
+            g_hid_brightness = data[HID_PAYLOAD(HID_BRITE_OFF_LEVEL)];
+            // TODO: drive an RGB brightness indicator here in a future commit.
+            break;
+        }
+
+        case HID_CMD_ACTIVE_APP: {
+            // Reserved — no action yet.  Payload is a null-terminated UTF-8
+            // application name (up to HID_APP_NAME_MAX bytes).
+            // TODO: implement active-app handling once the host side is ready.
+            break;
+        }
+
+        default:
+            break;
+    }
+
+    return true;  // packet was fully handled by us
+}
+
 // CAPS_MOD state: tap=ESC, hold=Ctrl, Shift+tap=CapsLock, Alt+tap=CapsWord, GUI+tap=Autocorrect
 static bool     caps_mod_held            = false;
 static bool     caps_mod_ctrl_registered = false;
 static uint16_t caps_mod_timer           = 0;
-
-enum layers {
-    BASE,
-    FN1,
-    FN2,
-    FN3,
-    FN4,
-    KEEB_CTL,
-};
 
 // clang-format off
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -134,8 +233,20 @@ combo_t                key_combos[]     = {
 };
 
 // Re-assert locked layers whenever QMK modifies layer state (e.g. TT release).
+// Also notifies the host application of the new active layer via Raw HID,
+// unless the change was itself triggered by an incoming HID packet (anti-loop).
 layer_state_t layer_state_set_user(layer_state_t state) {
-    return state | locked_layers;
+    state |= locked_layers;
+
+    if (!g_hid_recv_active) {
+        uint8_t top = get_highest_layer(state);
+        if (top != g_last_sent_layer) {
+            g_last_sent_layer = top;
+            hid_send_layer_sync(top, (uint8_t)locked_layers);
+        }
+    }
+
+    return state;
 }
 
 void keyboard_post_init_user(void) {
