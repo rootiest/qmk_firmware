@@ -116,3 +116,4 @@ via*.json
 !keyboards/keychron/*/firmware/*.bin
 /.claude_session
 /.remember/tmp/save-session.pid
+/.direnv/CACHEDIR.TAG
