@@ -259,6 +259,27 @@ void keyboard_post_init_user(void) {
     set_unicode_input_mode(UNICODE_MODE_LINUX);
 }
 
+#ifdef DIP_SWITCH_ENABLE
+// dip_switch_update_user is claimed by factory_test.c; use the weak
+// dip_switch_update_keymap hook added in q5_max.c instead.
+void dip_switch_update_keymap(uint8_t index, bool active) {
+    if (index == 0) {
+        if (active) {
+            // "Win" side → solid white backlight
+            rgb_matrix_mode(RGB_MATRIX_SOLID_COLOR);
+            rgb_matrix_sethsv(HSV_WHITE);
+        } else {
+            // "Mac" side → heatmap effect.
+            // Restore hue+saturation before switching modes: the heatmap reads
+            // rgb_matrix_config.hsv.s directly for its color scale, so leaving
+            // saturation=0 (from HSV_WHITE) produces a white-only heatmap.
+            rgb_matrix_sethsv(0, 255, rgb_matrix_get_val());
+            rgb_matrix_mode(RGB_MATRIX_TYPING_HEATMAP);
+        }
+    }
+}
+#endif
+
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (!process_record_keychron_common(keycode, record)) {
         return false;
