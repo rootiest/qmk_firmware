@@ -3,6 +3,16 @@
 
 #pragma once
 
+// Tight, strict combo window for a simultaneous 3-key press.
+// This ensures the fallback combo only fires when intended.
+#define COMBO_TERM 10
+#define COMBO_STRICT_TIMER
+
+// Use a more conservative debounce period (20ms is standard for Keychron)
+// but since we switched to 'sym_defer_pk' in rules.mk, this will now
+// require 20ms of STABILITY before a keypress is reported.
+#define DEBOUNCE 20
+
 // Always resolve combo keycodes from BASE (layer 0) so the
 // COMM+DOT+SLSH fallback combo fires regardless of the active layer.
 #define COMBO_ONLY_FROM_LAYER 0

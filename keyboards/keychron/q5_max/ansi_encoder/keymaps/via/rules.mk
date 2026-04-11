@@ -5,3 +5,5 @@ COMBO_ENABLE = yes
 CAPS_WORD_ENABLE = yes
 AUTOCORRECT_ENABLE = yes
 SRC += chord_unicode.c
+
+DEBOUNCE_TYPE = sym_defer_pk
