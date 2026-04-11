@@ -79,12 +79,12 @@ static uint8_t g_hid_brightness = 0;
 
 // Send the current layer state to the host / bridge application.
 static void hid_send_layer_sync(uint8_t layer, uint8_t locked_mask) {
-    uint8_t data[HID_PACKET_SIZE] = {0};
-    data[HID_OFF_CMD]                           = HID_CMD_LAYER_SYNC;
-    data[HID_OFF_SRC]                           = HID_DEV_Q5MAX;
-    data[HID_OFF_FLAGS]                         = 0;
-    data[HID_PAYLOAD(HID_LAYER_OFF_ACTIVE)]     = layer;
-    data[HID_PAYLOAD(HID_LAYER_OFF_LOCKED)]     = locked_mask;
+    uint8_t data[HID_PACKET_SIZE]           = {0};
+    data[HID_OFF_CMD]                       = HID_CMD_LAYER_SYNC;
+    data[HID_OFF_SRC]                       = HID_DEV_Q5MAX;
+    data[HID_OFF_FLAGS]                     = 0;
+    data[HID_PAYLOAD(HID_LAYER_OFF_ACTIVE)] = layer;
+    data[HID_PAYLOAD(HID_LAYER_OFF_LOCKED)] = locked_mask;
     raw_hid_send(data, HID_PACKET_SIZE);
 }
 
@@ -106,7 +106,7 @@ bool kc_raw_hid_rx_kb(uint8_t *data, uint8_t length) {
         case HID_CMD_LAYER_SYNC: {
             if (flags & HID_FLAG_QUERY) {
                 // Host requests current state — reply without changing anything.
-                uint8_t resp[HID_PACKET_SIZE] = {0};
+                uint8_t resp[HID_PACKET_SIZE]           = {0};
                 resp[HID_OFF_CMD]                       = HID_CMD_LAYER_SYNC;
                 resp[HID_OFF_SRC]                       = HID_DEV_Q5MAX;
                 resp[HID_OFF_FLAGS]                     = HID_FLAG_RESPONSE;
@@ -155,7 +155,7 @@ bool kc_raw_hid_rx_kb(uint8_t *data, uint8_t length) {
             break;
     }
 
-    return true;  // packet was fully handled by us
+    return true; // packet was fully handled by us
 }
 
 // CAPS_MOD state: tap=ESC, hold=Ctrl, Shift+tap=CapsLock, Alt+tap=CapsWord, GUI+tap=Autocorrect
@@ -167,7 +167,7 @@ static uint16_t caps_mod_timer           = 0;
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [BASE] = LAYOUT_ansi_101(
         KC_ESC,             KC_F1,    KC_F2,    KC_F3,    KC_F4,    KC_F5,    KC_F6,    KC_F7,    KC_F8,    KC_F9,    KC_F10,     KC_F11,   KC_F12,             KC_DEL,   KC_PSCR,  KC_CALC,  KC_FIND,    KC_MPLY,
-        KC_GRV,   KC_1,     KC_2,     KC_3,     KC_4,     KC_5,     KC_6,     KC_7,     KC_8,     KC_9,     KC_0,     KC_MINS,    KC_EQL,   BSP_DEL,            KC_PGUP,  KC_NUM,   KC_PSLS,  KC_PAST,    KC_PMNS,
+        KC_GRV,   KC_1,     KC_2,     KC_3,     KC_4,     KC_5,     KC_6,     KC_7,     KC_8,     KC_9,     KC_0,     KC_MINS,    KC_EQL,   KC_BSPC,            KC_PGUP,  KC_NUM,   KC_PSLS,  KC_PAST,    KC_PMNS,
         KC_TAB,   KC_Q,     KC_W,     KC_E,     KC_R,     KC_T,     KC_Y,     KC_U,     KC_I,     KC_O,     KC_P,     KC_LBRC,    KC_RBRC,  KC_BSLS,            KC_PGDN,  KC_P7,    KC_P8,    KC_P9,
         CAPS_MOD, KC_A,     KC_S,     KC_D,     KC_F,     KC_G,     KC_H,     KC_J,     KC_K,     KC_L,     KC_SCLN,  KC_QUOT,              KC_ENT,             TD(TD_HOME_END),  KC_P4,    KC_P5,    KC_P6,      KC_PPLS,
         KC_LSFT,            KC_Z,     KC_X,     KC_C,     KC_V,     KC_B,     KC_N,     KC_M,     KC_COMM,  KC_DOT,   KC_SLSH,              KC_RSFT,  KC_UP,              KC_P1,    KC_P2,    KC_P3,
@@ -323,12 +323,24 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             if (record->event.pressed) {
                 uint8_t target;
                 switch (keycode) {
-                    case LCK_FN1:  target = FN1;       break;
-                    case LCK_FN2:  target = FN2;       break;
-                    case LCK_FN3:  target = FN3;       break;
-                    case LCK_FN4:  target = FN4;       break;
-                    case LCK_CTL:  target = KEEB_CTL;  break;
-                    default:       target = BASE;      break;
+                    case LCK_FN1:
+                        target = FN1;
+                        break;
+                    case LCK_FN2:
+                        target = FN2;
+                        break;
+                    case LCK_FN3:
+                        target = FN3;
+                        break;
+                    case LCK_FN4:
+                        target = FN4;
+                        break;
+                    case LCK_CTL:
+                        target = KEEB_CTL;
+                        break;
+                    default:
+                        target = BASE;
+                        break;
                 }
                 if (target != BASE && (locked_layers & (1UL << target))) {
                     // Already locked on this layer — unlock and return to BASE.
@@ -385,8 +397,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 }
 
 void matrix_scan_user(void) {
-    if (caps_mod_held && !caps_mod_ctrl_registered
-        && timer_elapsed(caps_mod_timer) > TAPPING_TERM) {
+    if (caps_mod_held && !caps_mod_ctrl_registered && timer_elapsed(caps_mod_timer) > TAPPING_TERM) {
         caps_mod_ctrl_registered = true;
         register_code(KC_LCTL);
     }
@@ -425,13 +436,13 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
 
     // Caps Lock key (LED 55): shows CapsWord/Autocorrect/CapsLock state.
     if (is_caps_word_on()) {
-        RGB_MATRIX_INDICATOR_SET_COLOR(55, 0, 200, 0);     // green: Caps Word active
+        RGB_MATRIX_INDICATOR_SET_COLOR(55, 0, 200, 0); // green: Caps Word active
     } else if (!autocorrect_is_enabled()) {
-        RGB_MATRIX_INDICATOR_SET_COLOR(55, 150, 0, 255);   // purple: Autocorrect disabled
+        RGB_MATRIX_INDICATOR_SET_COLOR(55, 150, 0, 255); // purple: Autocorrect disabled
     } else if (host_keyboard_led_state().caps_lock) {
         RGB_MATRIX_INDICATOR_SET_COLOR(55, 255, 255, 255); // white: normal Caps Lock on
     } else {
-        RGB_MATRIX_INDICATOR_SET_COLOR(55, 0, 0, 0);       // off
+        RGB_MATRIX_INDICATOR_SET_COLOR(55, 0, 0, 0); // off
     }
 
     return false;
