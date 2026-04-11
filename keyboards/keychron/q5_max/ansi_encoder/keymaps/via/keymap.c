@@ -438,6 +438,15 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
 }
 #endif // RGB_MATRIX_ENABLE
 
+uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
+    switch (keycode) {
+        case TD(TD_HOME_END):
+            return 175;
+        default:
+            return TAPPING_TERM;
+    }
+}
+
 // Tap Dance definitions
 tap_dance_action_t tap_dance_actions[] = {
     // Tap once for Home, twice for End
