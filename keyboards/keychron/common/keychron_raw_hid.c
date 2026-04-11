@@ -85,6 +85,11 @@ void get_firmware_version(uint8_t *data) {
 
 __attribute__((weak)) void kc_rgb_matrix_rx(uint8_t *data, uint8_t length) {}
 
+/* Default no-op implementation; override in keymap.c to handle custom IDs. */
+__attribute__((weak)) bool kc_raw_hid_rx_kb(uint8_t *data, uint8_t length) {
+    return false;
+}
+
 bool kc_raw_hid_rx(uint8_t *data, uint8_t length) {
     switch (data[0]) {
         case KC_GET_PROTOCOL_VERSION:
@@ -185,7 +190,7 @@ bool kc_raw_hid_rx(uint8_t *data, uint8_t length) {
 
 #endif
         default:
-            return false;
+            return kc_raw_hid_rx_kb(data, length);
     }
 
     raw_hid_send(data, length);
