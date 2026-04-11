@@ -16,3 +16,8 @@
 // Always resolve combo keycodes from BASE (layer 0) so the
 // COMM+DOT+SLSH fallback combo fires regardless of the active layer.
 #define COMBO_ONLY_FROM_LAYER 0
+
+// Default tapping term for mod-tap, layer-tap, and tap-dance keys.
+#define TAPPING_TERM 200
+// Allow per-key overrides via get_tapping_term() in keymap.c.
+#define TAPPING_TERM_PER_KEY
