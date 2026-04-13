@@ -45,6 +45,14 @@
 
 #endif
 
+// Pin VIA keymap storage to a fixed EEPROM address.  By default VIA places its
+// magic/keymap block immediately after EECONFIG_KB_DATA_SIZE, so any growth in
+// the Keychron custom-RGB EEPROM region shifts the keymap silently and corrupts
+// the stored layout (observed as layer 0 keys reverting to KC_TRNS on boot).
+// 544 is past the current Keychron data region and leaves headroom for further
+// EEPROM additions without requiring another VIA reset.
+#define VIA_EEPROM_MAGIC_ADDR 544
+
 /* Number of layers */
 #define DYNAMIC_KEYMAP_LAYER_COUNT 6
 
