@@ -211,7 +211,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         RGB_TOG,  RGB_MOD,  RGB_VAI,  RGB_HUI,  RGB_SAI,  RGB_SPI,  _______,  _______,  _______,  _______,  _______,  _______,    _______,  _______,            _______,  _______,  _______,  _______,
         _______,  RGB_RMOD, RGB_VAD,  RGB_HUD,  RGB_SAD,  RGB_SPD,  _______,  _______,  _______,  _______,  _______,  _______,              _______,            KC_END,   _______,  _______,  _______,    _______,
         _______,            _______,  _______,  _______,  _______,  BAT_LVL,  NK_TOGG,  _______,  _______,  _______,  _______,              _______,  _______,            _______,  _______,  _______,
-        _______,  _______,  _______,                                _______,                                _______,  _______,    _______,  _______,  _______,  _______,            _______,  _______,    _______),
+        _______,  _______,  _______,                                _______,                                _______,  _______,    _______,  _______,  _______,  _______,        QK_CLEAR_EEPROM,  _______,    _______),
 };
 
 #if defined(ENCODER_MAP_ENABLE)
@@ -262,20 +262,16 @@ void keyboard_post_init_user(void) {
 #ifdef DIP_SWITCH_ENABLE
 // dip_switch_update_user is claimed by factory_test.c; use the weak
 // dip_switch_update_keymap hook added in q5_max.c instead.
+
+// True while the Win-side dip switch is active.  The underlying RGB effect
+// keeps running unchanged; rgb_matrix_indicators_advanced_user() paints over
+// all LEDs with white each frame so neither mode nor EEPROM state is touched.
+// Transport changes (which call rgb_matrix_init()) are therefore irrelevant.
+static bool dip_win_active = false;
+
 void dip_switch_update_keymap(uint8_t index, bool active) {
     if (index == 0) {
-        if (active) {
-            // "Win" side → solid white backlight
-            rgb_matrix_mode(RGB_MATRIX_SOLID_COLOR);
-            rgb_matrix_sethsv(HSV_WHITE);
-        } else {
-            // "Mac" side → heatmap effect.
-            // Restore hue+saturation before switching modes: the heatmap reads
-            // rgb_matrix_config.hsv.s directly for its color scale, so leaving
-            // saturation=0 (from HSV_WHITE) produces a white-only heatmap.
-            rgb_matrix_sethsv(0, 255, rgb_matrix_get_val());
-            rgb_matrix_mode(RGB_MATRIX_TYPING_HEATMAP);
-        }
+        dip_win_active = active;
     }
 }
 #endif
@@ -434,6 +430,19 @@ void matrix_scan_user(void) {
 // BASE stays dark; each FN/control layer gets a distinct colour.
 #if defined(RGB_MATRIX_ENABLE)
 bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
+#ifdef DIP_SWITCH_ENABLE
+    // Win-side override: paint all LEDs white so the user gets a clean white
+    // backlight regardless of which RGB effect is active.  The effect keeps
+    // ticking internally and resumes the moment the switch returns to Mac side.
+    // Layer and status indicators painted in the rest of this function appear
+    // on top of the white fill, so they continue to work normally.
+    if (dip_win_active) {
+        for (uint8_t i = led_min; i < led_max; i++) {
+            rgb_matrix_set_color(i, 255, 255, 255);
+        }
+    }
+#endif
+
     switch (get_highest_layer(layer_state)) {
         case FN1:
             RGB_MATRIX_INDICATOR_SET_COLOR(0, 0, 128, 255); // blue

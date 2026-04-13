@@ -15,6 +15,9 @@
  */
 
 #include "rgb_matrix_kb_config.h"
+#ifdef KEYCHRON_RGB_ENABLE
+#    include "eeconfig_custom_rgb.h"
+#endif
 
 #if defined(KEYCHRON_RGB_ENABLE) && defined(EECONFIG_SIZE_CUSTOM_RGB)
 //extern bool MIXED_RGB(effect_params_t *params);

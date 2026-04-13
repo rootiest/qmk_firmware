@@ -14,6 +14,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifdef KEYCHRON_RGB_ENABLE
+#    include "eeconfig_custom_rgb.h"
+#endif
+
 #if defined(KEYCHRON_RGB_ENABLE) && defined(EECONFIG_SIZE_CUSTOM_RGB)
 
 #include "quantum.h"

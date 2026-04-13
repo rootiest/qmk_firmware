@@ -76,7 +76,7 @@ void eeconfig_reset_custom_rgb(void) {
 
     eeprom_update_block(&os_ind_cfg, OFFSET_OS_INDICATOR, sizeof(os_ind_cfg));
     retail_demo_enable = 0;
-    eeprom_read_block(&retail_demo_enable, (uint8_t *)(OFFSET_RETAIL_DEMO), sizeof(retail_demo_enable));
+    eeprom_update_block(&retail_demo_enable, (uint8_t *)(OFFSET_RETAIL_DEMO), sizeof(retail_demo_enable));
     per_key_rgb_type = 0;
     eeprom_update_block(&per_key_rgb_type, OFFSET_PER_KEY_RGB_TYPE, sizeof(per_key_rgb_type));
 
@@ -100,15 +100,24 @@ void eeconfig_reset_custom_rgb(void) {
     effect_list[1][0].time = 5000;
 
     eeprom_update_block(effect_list, OFFSET_EFFECT_LIST, sizeof(effect_list));
+    eeprom_update_dword(EECONFIG_KEYBOARD, (EECONFIG_KB_DATA_VERSION));
     update_mixed_rgb_effect_count();
 }
 
 void eeconfig_init_custom_rgb(void) {
     memcpy(per_key_led, default_per_key_led, sizeof(per_key_led));
-    eeprom_update_dword(EECONFIG_KEYBOARD, (EECONFIG_KB_DATA_VERSION));
 
     eeprom_read_block(&os_ind_cfg, OFFSET_OS_INDICATOR, sizeof(os_ind_cfg));
     eeprom_read_block(&retail_demo_enable, (uint8_t *)(OFFSET_RETAIL_DEMO), sizeof(retail_demo_enable));
+    // Clamp to a valid boolean.  eeconfig_reset_custom_rgb() had a bug that
+    // used eeprom_read_block instead of eeprom_update_block for this byte,
+    // leaving EEPROM unwritten (often 0xFF on a freshly-flashed board).
+    // retail_demo_task() treats any non-zero value as "demo active" and forces
+    // the mode to CUSTOM_MIXED_RGB every scan, preventing mode changes.
+    if (retail_demo_enable > 1) {
+        retail_demo_enable = 0;
+        eeprom_update_block(&retail_demo_enable, (uint8_t *)(OFFSET_RETAIL_DEMO), sizeof(retail_demo_enable));
+    }
 
     if (os_ind_cfg.hsv.v < 128) os_ind_cfg.hsv.v = 128;
     // Load per key rgb led
@@ -282,6 +291,12 @@ static bool kc_rgb_save(void) {
     eeprom_update_block(per_key_led, OFFSET_PER_KEY_RGBS, RGB_MATRIX_LED_COUNT * sizeof(rgb_led_t));
     eeprom_update_block(regions, OFFSET_LAYER_FLAGS, RGB_MATRIX_LED_COUNT);
     eeprom_update_block(effect_list, OFFSET_EFFECT_LIST, sizeof(effect_list));
+
+    // Persist the current QMK RGB mode so it survives transport changes and
+    // power cycles.  Without this, rgb_matrix_init() reloads the EEPROM default
+    // (RGB_MATRIX_TYPING_HEATMAP) and the Launcher-configured mode is lost.
+    extern void eeconfig_update_rgb_matrix(void);
+    eeconfig_update_rgb_matrix();
 
     return true;
 }
