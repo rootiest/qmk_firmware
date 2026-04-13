@@ -16,6 +16,14 @@
 
 #pragma once
 
+// Pin VIA keymap storage to a fixed EEPROM address.  By default VIA places its
+// magic/keymap block immediately after EECONFIG_KB_DATA_SIZE, so any growth in
+// the Keychron custom-RGB EEPROM region shifts the keymap silently and corrupts
+// the stored layout (observed as layer 0 keys reverting to KC_TRNS on boot).
+// 552 is past the current Keychron data region end (540) and leaves headroom
+// for further EEPROM additions without requiring another VIA reset.
+#define VIA_EEPROM_MAGIC_ADDR 552
+
 #ifdef RGB_MATRIX_ENABLE
 /* RGB Matrix driver configuration */
 #    define RGB_MATRIX_LED_COUNT 103
