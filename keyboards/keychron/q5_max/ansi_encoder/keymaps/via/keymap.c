@@ -228,12 +228,12 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][2] = {
 // clang-format on
 
 // Combos -----------------------------------------------------------------
-// COMM + DOT + SLSH → TO(BASE): emergency fallback to base layer.
+// COMM + DOT + SLSH → LCK_BASE: emergency fallback to base layer.
 // COMBO_ONLY_FROM_LAYER 0 (config.h) ensures these keycodes are always
 // resolved from BASE so the combo fires regardless of the active layer.
 const uint16_t PROGMEM fallback_combo[] = {KC_COMM, KC_DOT, KC_SLSH, COMBO_END};
 combo_t                key_combos[]     = {
-    COMBO(fallback_combo, TO(BASE)),
+    COMBO(fallback_combo, LCK_BASE),
 };
 
 // Re-assert locked layers whenever QMK modifies layer state (e.g. TT release).
