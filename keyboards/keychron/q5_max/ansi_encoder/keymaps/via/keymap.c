@@ -20,6 +20,10 @@
 #include "raw_hid.h"
 #include "keychron_raw_hid.h"
 #include "hid_protocol.h"
+#ifdef LK_WIRELESS_ENABLE
+#    include "battery.h"
+#    include "transport.h"
+#endif
 
 // Tap Dance declarations
 enum {
@@ -76,6 +80,34 @@ static uint8_t g_last_sent_layer = 0xFF;
 // Latest host-reported values (stored for future RGB indicator use).
 static uint8_t g_hid_volume     = 0;
 static uint8_t g_hid_brightness = 0;
+
+// Battery reporting state (wireless mode only).
+// Pushes the current percentage every BAT_REPORT_INTERVAL_MS ms.
+// Suppresses redundant sends when the level hasn't changed.
+#ifdef LK_WIRELESS_ENABLE
+#    define BAT_REPORT_INTERVAL_MS 300000U // 5 minutes
+static uint32_t g_bat_timer     = 0;
+static bool     g_bat_sent_once = false;
+static uint8_t  g_last_sent_bat = HID_BATT_UNAVAILABLE;
+#endif
+
+// Send the current battery percentage to the host.
+// Only fires when get_transport() & TRANSPORT_WIRELESS; no-op otherwise.
+// Suppresses sends when the level matches the last value sent.
+#ifdef LK_WIRELESS_ENABLE
+static void hid_send_battery(void) {
+    if (!(get_transport() & TRANSPORT_WIRELESS)) return;
+    uint8_t level = battery_get_percentage();
+    if (level == g_last_sent_bat) return;
+    g_last_sent_bat                          = level;
+    uint8_t data[HID_PACKET_SIZE]            = {0};
+    data[HID_OFF_CMD]                        = HID_CMD_BATTERY;
+    data[HID_OFF_SRC]                        = HID_DEV_Q5MAX;
+    data[HID_OFF_FLAGS]                      = 0;
+    data[HID_PAYLOAD(HID_BATT_OFF_LEVEL)]    = level;
+    raw_hid_send(data, HID_PACKET_SIZE);
+}
+#endif
 
 // Send the current layer state to the host / bridge application.
 static void hid_send_layer_sync(uint8_t layer, uint8_t locked_mask) {
@@ -148,6 +180,26 @@ bool kc_raw_hid_rx_kb(uint8_t *data, uint8_t length) {
             // Reserved — no action yet.  Payload is a null-terminated UTF-8
             // application name (up to HID_APP_NAME_MAX bytes).
             // TODO: implement active-app handling once the host side is ready.
+            break;
+        }
+
+        case HID_CMD_BATTERY: {
+            // Host is querying the current battery level.
+            // Reply with the current percentage when in wireless mode, or
+            // HID_BATT_UNAVAILABLE when wired (USB transport / not meaningful).
+            uint8_t resp[HID_PACKET_SIZE]         = {0};
+            resp[HID_OFF_CMD]                     = HID_CMD_BATTERY;
+            resp[HID_OFF_SRC]                     = HID_DEV_Q5MAX;
+            resp[HID_OFF_FLAGS]                   = HID_FLAG_RESPONSE;
+#ifdef LK_WIRELESS_ENABLE
+            resp[HID_PAYLOAD(HID_BATT_OFF_LEVEL)] =
+                (get_transport() & TRANSPORT_WIRELESS)
+                    ? battery_get_percentage()
+                    : HID_BATT_UNAVAILABLE;
+#else
+            resp[HID_PAYLOAD(HID_BATT_OFF_LEVEL)] = HID_BATT_UNAVAILABLE;
+#endif
+            raw_hid_send(resp, HID_PACKET_SIZE);
             break;
         }
 
@@ -423,6 +475,17 @@ void matrix_scan_user(void) {
         alt_tab_active = false;
     }
     chord_scan();
+
+#ifdef LK_WIRELESS_ENABLE
+    // Push battery level to host every BAT_REPORT_INTERVAL_MS when wireless.
+    // First call fires immediately (g_bat_sent_once == false) so the host gets
+    // a reading as soon as the keyboard connects over USB in wireless mode.
+    if (!g_bat_sent_once || timer_elapsed32(g_bat_timer) >= BAT_REPORT_INTERVAL_MS) {
+        g_bat_sent_once = true;
+        g_bat_timer     = timer_read32();
+        hid_send_battery();
+    }
+#endif
 }
 
 // RGB Matrix Indicators --------------------------------------------------

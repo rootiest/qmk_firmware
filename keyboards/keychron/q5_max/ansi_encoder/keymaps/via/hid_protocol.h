@@ -31,6 +31,7 @@
 #define HID_CMD_VOLUME       0x41u   // System volume level (host → keyboard)
 #define HID_CMD_BRIGHTNESS   0x42u   // Screen brightness level (host → keyboard)
 #define HID_CMD_ACTIVE_APP   0x43u   // Active window/app name (reserved — future)
+#define HID_CMD_BATTERY      0x44u   // Battery level (keyboard → host; wireless mode only)
 #define HID_CMD_ACK          0x7Eu   // Generic acknowledgement
 
 // ---------------------------------------------------------------------------
@@ -79,6 +80,15 @@
 //   [0..27] Null-terminated UTF-8 application name (max 28 bytes incl. NUL)
 // ---------------------------------------------------------------------------
 #define HID_APP_NAME_MAX 28u
+
+// ---------------------------------------------------------------------------
+// HID_CMD_BATTERY payload
+//   [0] Battery percentage 0-100, or HID_BATT_UNAVAILABLE when the keyboard
+//       is in USB transport mode (battery reading not meaningful / charging).
+//       Keyboard only sends this packet when get_transport() & TRANSPORT_WIRELESS.
+// ---------------------------------------------------------------------------
+#define HID_BATT_OFF_LEVEL   0u     // Payload byte 0: percentage (0-100)
+#define HID_BATT_UNAVAILABLE 0xFFu  // Sentinel: not in wireless mode
 
 // ---------------------------------------------------------------------------
 // Packet size
