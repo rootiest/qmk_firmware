@@ -20,6 +20,10 @@
 #include "raw_hid.h"
 #include "keychron_raw_hid.h"
 #include "hid_protocol.h"
+#ifdef LK_WIRELESS_ENABLE
+#    include "battery.h"
+#    include "transport.h"
+#endif
 
 // Tap Dance declarations
 enum {
@@ -37,9 +41,10 @@ enum custom_keycodes {
     LCK_FN4,                  // Lock/unlock FN4
     LCK_CTL,                  // Lock/unlock KEEB_CTL
     LCK_BASE,                 // Clear all locks and return to BASE
-    CAPS_MOD,                 // Tap=ESC, hold=Ctrl, Shift=CapsLock, Alt=CapsWord, GUI=Autocorrect
     BSP_DEL,                  // Tap=Backspace, Shift+Tap=Delete
 };
+
+#define CAPS_MOD MT(MOD_LCTL, KC_ESC)
 
 // Declare layers early so the HID functions below can reference KEEB_CTL.
 enum layers {
@@ -76,6 +81,34 @@ static uint8_t g_last_sent_layer = 0xFF;
 // Latest host-reported values (stored for future RGB indicator use).
 static uint8_t g_hid_volume     = 0;
 static uint8_t g_hid_brightness = 0;
+
+// Battery reporting state (wireless mode only).
+// Pushes the current percentage every BAT_REPORT_INTERVAL_MS ms.
+// Suppresses redundant sends when the level hasn't changed.
+#ifdef LK_WIRELESS_ENABLE
+#    define BAT_REPORT_INTERVAL_MS 300000U // 5 minutes
+static uint32_t g_bat_timer     = 0;
+static bool     g_bat_sent_once = false;
+static uint8_t  g_last_sent_bat = HID_BATT_UNAVAILABLE;
+#endif
+
+// Send the current battery percentage to the host.
+// Only fires when get_transport() & TRANSPORT_WIRELESS; no-op otherwise.
+// Suppresses sends when the level matches the last value sent.
+#ifdef LK_WIRELESS_ENABLE
+static void hid_send_battery(void) {
+    if (!(get_transport() & TRANSPORT_WIRELESS)) return;
+    uint8_t level = battery_get_percentage();
+    if (level == g_last_sent_bat) return;
+    g_last_sent_bat                       = level;
+    uint8_t data[HID_PACKET_SIZE]         = {0};
+    data[HID_OFF_CMD]                     = HID_CMD_BATTERY;
+    data[HID_OFF_SRC]                     = HID_DEV_Q5MAX;
+    data[HID_OFF_FLAGS]                   = 0;
+    data[HID_PAYLOAD(HID_BATT_OFF_LEVEL)] = level;
+    raw_hid_send(data, HID_PACKET_SIZE);
+}
+#endif
 
 // Send the current layer state to the host / bridge application.
 static void hid_send_layer_sync(uint8_t layer, uint8_t locked_mask) {
@@ -151,6 +184,23 @@ bool kc_raw_hid_rx_kb(uint8_t *data, uint8_t length) {
             break;
         }
 
+        case HID_CMD_BATTERY: {
+            // Host is querying the current battery level.
+            // Reply with the current percentage when in wireless mode, or
+            // HID_BATT_UNAVAILABLE when wired (USB transport / not meaningful).
+            uint8_t resp[HID_PACKET_SIZE] = {0};
+            resp[HID_OFF_CMD]             = HID_CMD_BATTERY;
+            resp[HID_OFF_SRC]             = HID_DEV_Q5MAX;
+            resp[HID_OFF_FLAGS]           = HID_FLAG_RESPONSE;
+#ifdef LK_WIRELESS_ENABLE
+            resp[HID_PAYLOAD(HID_BATT_OFF_LEVEL)] = (get_transport() & TRANSPORT_WIRELESS) ? battery_get_percentage() : HID_BATT_UNAVAILABLE;
+#else
+            resp[HID_PAYLOAD(HID_BATT_OFF_LEVEL)] = HID_BATT_UNAVAILABLE;
+#endif
+            raw_hid_send(resp, HID_PACKET_SIZE);
+            break;
+        }
+
         default:
             break;
     }
@@ -159,9 +209,7 @@ bool kc_raw_hid_rx_kb(uint8_t *data, uint8_t length) {
 }
 
 // CAPS_MOD state: tap=ESC, hold=Ctrl, Shift+tap=CapsLock, Alt+tap=CapsWord, GUI+tap=Autocorrect
-static bool     caps_mod_held            = false;
-static bool     caps_mod_ctrl_registered = false;
-static uint16_t caps_mod_timer           = 0;
+// (Refactored to use MT(MOD_LCTL, KC_ESC) with custom tap logic)
 
 // clang-format off
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -298,38 +346,28 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
     switch (keycode) {
         case CAPS_MOD:
-            if (record->event.pressed) {
-                caps_mod_held  = true;
-                caps_mod_timer = timer_read();
-                // If a real modifier is held, send a dummy key so the OS sees
-                // modifier+key rather than a bare modifier hold/tap. Without
-                // this, the OS never receives any keycode while the modifier is
-                // down and treats the eventual modifier release as a tap (e.g.
-                // GUI opening the app menu). KC_F24 is harmless and universally
-                // ignored by applications.
-                if (get_mods() & (MOD_MASK_GUI | MOD_MASK_ALT | MOD_MASK_SHIFT)) {
-                    register_code(KC_F24);
-                    unregister_code(KC_F24);
-                }
-            } else {
-                if (caps_mod_ctrl_registered) {
-                    unregister_code(KC_LCTL);
-                    caps_mod_ctrl_registered = false;
-                } else {
-                    uint8_t mods = get_mods();
+            // Custom tap logic: only intercept if it's a TAP AND a modifier is held.
+            // If it's a pure hold (Ctrl) or a pure tap (Esc), return true to let
+            // the MT() core handle it.
+            if (record->tap.count > 0 && record->event.pressed) {
+                uint8_t mods = get_mods();
+                if (mods & (MOD_MASK_GUI | MOD_MASK_ALT)) {
+                    // Neutralize the modifier hold so releasing GUI/Alt doesn't
+                    // trigger an OS "tap" action (like opening the Start menu).
+                    tap_code(DUMMY_MOD_NEUTRALIZER_KEYCODE);
+
                     if (mods & MOD_MASK_GUI) {
                         autocorrect_toggle();
-                    } else if (mods & MOD_MASK_ALT) {
-                        caps_word_toggle();
-                    } else if (mods & MOD_MASK_SHIFT) {
-                        tap_code(KC_CAPS); // Shift still held → host sees Shift+CapsLock (toggles on most OSes)
                     } else {
-                        tap_code(KC_ESC);
+                        caps_word_toggle();
                     }
+                    return false; // suppress default Esc tap
+                } else if (mods & MOD_MASK_SHIFT) {
+                    tap_code(KC_CAPS);
+                    return false; // suppress default Esc tap
                 }
-                caps_mod_held = false; // cleared in both hold and tap paths
             }
-            return false;
+            return true; // let core handle Esc tap or Ctrl hold
 
         case LCK_FN1:
         case LCK_FN2:
@@ -414,15 +452,22 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 }
 
 void matrix_scan_user(void) {
-    if (caps_mod_held && !caps_mod_ctrl_registered && timer_elapsed(caps_mod_timer) > TAPPING_TERM) {
-        caps_mod_ctrl_registered = true;
-        register_code(KC_LCTL);
-    }
     if (alt_tab_active && timer_elapsed(alt_tab_timer) > ALT_TAB_TIMEOUT) {
         unregister_code(KC_LALT);
         alt_tab_active = false;
     }
     chord_scan();
+
+#ifdef LK_WIRELESS_ENABLE
+    // Push battery level to host every BAT_REPORT_INTERVAL_MS when wireless.
+    // First call fires immediately (g_bat_sent_once == false) so the host gets
+    // a reading as soon as the keyboard connects over USB in wireless mode.
+    if (!g_bat_sent_once || timer_elapsed32(g_bat_timer) >= BAT_REPORT_INTERVAL_MS) {
+        g_bat_sent_once = true;
+        g_bat_timer     = timer_read32();
+        hid_send_battery();
+    }
+#endif
 }
 
 // RGB Matrix Indicators --------------------------------------------------
@@ -430,7 +475,7 @@ void matrix_scan_user(void) {
 // BASE stays dark; each FN/control layer gets a distinct colour.
 #if defined(RGB_MATRIX_ENABLE)
 bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
-#ifdef DIP_SWITCH_ENABLE
+#    ifdef DIP_SWITCH_ENABLE
     // Win-side override: paint all LEDs white so the user gets a clean white
     // backlight regardless of which RGB effect is active.  The effect keeps
     // ticking internally and resumes the moment the switch returns to Mac side.
@@ -441,7 +486,7 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
             rgb_matrix_set_color(i, 255, 255, 255);
         }
     }
-#endif
+#    endif
 
     switch (get_highest_layer(layer_state)) {
         case FN1:
