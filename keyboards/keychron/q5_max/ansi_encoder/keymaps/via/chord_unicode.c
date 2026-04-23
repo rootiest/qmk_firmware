@@ -51,8 +51,83 @@ static const chord_entry_t chord_table[] = {
     {"delta", "Δ"},  // capital delta        U+0394
     {"theta", "θ"},  // small theta          U+03B8
     {"omega", "Ω"},  // capital omega        U+03A9
-    {"alpha", "α"},  // small alpha          U+03B1
-    {"beta",  "β"},  // small beta           U+03B2
+    {"alpha",   "α"},  // small alpha    U+03B1
+    {"beta",    "β"},  // small beta     U+03B2
+    {"gamma",   "γ"},  // small gamma    U+03B3
+    {"epsilon", "ε"},  // small epsilon  U+03B5
+    {"eps",     "ε"},  //   alias
+    {"zeta",    "ζ"},  // small zeta     U+03B6
+    {"eta",     "η"},  // small eta      U+03B7
+    {"iota",    "ι"},  // small iota     U+03B9
+    {"kappa",   "κ"},  // small kappa    U+03BA
+    {"lambda",  "λ"},  // small lambda   U+03BB
+    {"mu",      "μ"},  // small mu       U+03BC  (disambig: "mute")
+    {"nu",      "ν"},  // small nu       U+03BD
+    {"xi",      "ξ"},  // small xi       U+03BE
+    {"omicron", "ο"},  // small omicron  U+03BF
+    {"omi",     "ο"},  //   alias
+    {"rho",     "ρ"},  // small rho      U+03C1
+    {"tau",     "τ"},  // small tau      U+03C4
+    {"upsilon", "υ"},  // small upsilon  U+03C5
+    {"ups",     "υ"},  //   alias
+    {"phi",     "φ"},  // small phi      U+03C6
+    {"chi",     "χ"},  // small chi      U+03C7
+    {"psi",     "ψ"},  // small psi      U+03C8
+
+    // ---- Number sets (blackboard bold) ------------------------------------
+    {"real",  "ℝ"},  // real numbers      U+211D
+    {"nat",   "ℕ"},  // natural numbers   U+2115
+    {"intgr", "ℤ"},  // integers          U+2124
+    {"rat",   "ℚ"},  // rational numbers  U+211A
+    {"cmplx", "ℂ"},  // complex numbers   U+2102
+    {"aleph", "ℵ"},  // aleph             U+2135
+
+    // ---- Calculus / Analysis -----------------------------------------------
+    {"integ",   "∫"},  // integral           U+222B
+    {"iint",    "∬"},  // double integral    U+222C
+    {"oint",    "∮"},  // contour integral   U+222E
+    {"partial", "∂"},  // partial derivative U+2202
+    {"prt",     "∂"},  //   alias
+    {"nabla",   "∇"},  // nabla / del        U+2207
+    {"sum",     "∑"},  // summation          U+2211
+    {"prod",    "∏"},  // product            U+220F
+
+    // ---- Set theory --------------------------------------------------------
+    {"elem",   "∈"},  // element of         U+2208
+    {"notin",  "∉"},  // not element of     U+2209
+    {"sub",    "⊂"},  // subset of          U+2282  (disambig: "subeq")
+    {"subeq",  "⊆"},  // subset or equal    U+2286
+    {"sup",    "⊃"},  // superset of        U+2283  (disambig: "supeq")
+    {"supeq",  "⊇"},  // superset or equal  U+2287
+    {"union",  "∪"},  // union              U+222A
+    {"inter",  "∩"},  // intersection       U+2229
+    {"empty",  "∅"},  // empty set          U+2205
+
+    // ---- Logic -------------------------------------------------------------
+    {"forall", "∀"},  // for all            U+2200
+    {"exists", "∃"},  // there exists       U+2203
+    {"nexist", "∄"},  // does not exist     U+2204
+    {"land",   "∧"},  // logical and        U+2227
+    {"lor",    "∨"},  // logical or         U+2228
+    {"xor",    "⊕"},  // exclusive or       U+2295
+    {"impl",   "⟹"},  // implies            U+27F9
+    {"iff",    "⟺"},  // if and only if     U+27FA
+
+    // ---- Geometry / Linear algebra -----------------------------------------
+    {"angle",  "∠"},  // angle              U+2220
+    {"ang",    "∠"},  //   alias
+    {"perp",   "⊥"},  // perpendicular      U+22A5
+    {"parl",   "∥"},  // parallel           U+2225
+
+    // ---- Floor / ceiling ---------------------------------------------------
+    {"lfl",    "⌊"},  // left floor         U+230A
+    {"rfl",    "⌋"},  // right floor        U+230B
+    {"lcl",    "⌈"},  // left ceiling       U+2308
+    {"rcl",    "⌉"},  // right ceiling      U+2309
+
+    // ---- Other math --------------------------------------------------------
+    {"equiv",  "≡"},  // congruent / equiv  U+2261
+    {"prop",   "∝"},  // proportional to    U+221D
 
     // ---- Currency ----------------------------------------------------------
     {"euro",  "€"},  // euro                 U+20AC
