@@ -112,9 +112,11 @@ compile_commands.json
 via*.json
 /keyboards/**/keymaps/vial/*
 
+# AI Sessions
+.gemini_session
+.claude_session
+
 # Keep firmware file
 !keyboards/keychron/*/firmware/*.bin
-/.claude_session
 /.remember/tmp/save-session.pid
 /.direnv/CACHEDIR.TAG
-/.gemini_session
