@@ -1,36 +1,46 @@
-# Quantum Mechanical Keyboard Firmware
+# Rootiest's QMK Firmware
 
-[![Current Version](https://img.shields.io/github/tag/qmk/qmk_firmware.svg)](https://github.com/qmk/qmk_firmware/tags)
-[![Discord](https://img.shields.io/discord/440868230475677696.svg)](https://discord.gg/Uq7gcHh)
-[![Docs Status](https://img.shields.io/badge/docs-ready-orange.svg)](https://docs.qmk.fm)
-[![GitHub contributors](https://img.shields.io/github/contributors/qmk/qmk_firmware.svg)](https://github.com/qmk/qmk_firmware/pulse/monthly)
-[![GitHub forks](https://img.shields.io/github/forks/qmk/qmk_firmware.svg?style=social&label=Fork)](https://github.com/qmk/qmk_firmware/)
+Personal fork of [QMK Firmware](https://github.com/qmk/qmk_firmware), built
+around my own keyboards and keymaps. Upstream QMK is huge and generic; this
+fork exists to carry my custom keymaps, board tweaks, and build tooling on
+top of it.
 
-This is a keyboard firmware based on the [tmk\_keyboard firmware](https://github.com/tmk/tmk_keyboard) with some useful features for Atmel AVR and ARM controllers, and more specifically, the [OLKB product line](https://olkb.com), the [ErgoDox EZ](https://ergodox-ez.com) keyboard, and the Clueboard product line.
+## Keyboards & Keymaps
 
-## Documentation
+* **[Keychron Q5 Max](/keyboards/keychron/q5_max/ansi_encoder/keymaps/via/)**
+  (ansi_encoder, `via` keymap) — main daily driver. Custom chorded Unicode
+  input (Greek letters, math symbols) with a generated
+  [cheatsheet](/keyboards/keychron/q5_max/ansi_encoder/keymaps/via/cheatsheet.html),
+  autocorrect, tap-dance, a bidirectional Raw HID protocol, and custom RGB
+  indicators.
+* **[Keychron K17 Max](/keyboards/keychron/k17_max/ansi_encoder/rgb/keymaps/via/)**
+  (ansi_encoder/rgb, `via` keymap)
 
-* [See the official documentation on docs.qmk.fm](https://docs.qmk.fm)
+## Building & Flashing
 
-The docs are powered by [Docsify](https://docsify.js.org/) and hosted on [GitHub](/docs/). They are also viewable offline; see [Previewing the Documentation](https://docs.qmk.fm/#/contributing?id=previewing-the-documentation) for more details.
+Standard QMK CLI workflow:
 
-You can request changes by making a fork and opening a [pull request](https://github.com/qmk/qmk_firmware/pulls), or by clicking the "Edit this page" link at the bottom of any page.
+```sh
+qmk compile -kb keychron/q5_max/ansi_encoder -km via
+qmk flash -kb keychron/q5_max/ansi_encoder -km via
+```
 
-## Supported Keyboards
+Merges to `main` also build and publish firmware via CI
+(`.github/workflows/build-release.yml`).
 
-* [Planck](/keyboards/planck/)
-* [Preonic](/keyboards/preonic/)
-* [ErgoDox EZ](/keyboards/ergodox_ez/)
-* [Clueboard](/keyboards/clueboard/)
-* [Cluepad](/keyboards/clueboard/17/)
-* [Atreus](/keyboards/atreus/)
+## Repo Mirroring
 
-The project also includes community support for [lots of other keyboards](/keyboards/).
+[git.rootiest.dev](https://git.rootiest.dev/rootiest/qmk_firmware) (Gitea) is
+the primary repo. GitHub is a mirror, pushed automatically from Gitea.
+Push directly to GitHub and the next mirror sync overwrites it. Open
+issues/PRs and push branches on Gitea.
 
-## Maintainers
+GitHub does host the pre-built firmware releases (from CI in
+`.github/workflows/build-release.yml`), so grab binaries there.
 
-QMK is developed and maintained by Jack Humbert of OLKB with contributions from the community, and of course, [Hasu](https://github.com/tmk). The OLKB product firmwares are maintained by [Jack Humbert](https://github.com/jackhumbert), the Ergodox EZ by [ZSA Technology Labs](https://github.com/zsa), the Clueboard by [Zach White](https://github.com/skullydazed), and the Atreus by [Phil Hagelberg](https://github.com/technomancy).
+## Upstream Documentation
 
-## Official Website
-
-[qmk.fm](https://qmk.fm) is the official website of QMK, where you can find links to this page, the documentation, and the keyboards supported by QMK.
+This fork tracks [qmk/qmk_firmware](https://github.com/qmk/qmk_firmware).
+For general QMK docs (keycodes, features, config options, supported
+hardware), see [docs.qmk.fm](https://docs.qmk.fm) — none of that is
+duplicated here.
