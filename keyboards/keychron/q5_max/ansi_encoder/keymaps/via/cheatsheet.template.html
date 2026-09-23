@@ -1,0 +1,482 @@
+<!-- Template for gen_cheatsheet.py — edit here, then regenerate cheatsheet.html -->
+<meta charset="utf-8">
+<title>Q5 Max Cheatsheet</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400;600;700&family=JetBrains+Mono:wght@500;700&family=Noto+Sans+Math&family=Noto+Sans+Symbols+2&display=swap">
+<style>
+:root {
+  --bg: #e8ebee;
+  --panel: #f5f6f8;
+  --ink: #15191e;
+  --muted: #5b6570;
+  --line: #d1d6dc;
+  --cap: #ffffff;
+  --cap-edge: #bfc6ce;
+  --accent: #0a66e8;
+  --accent-ink: #ffffff;
+  --warn: #a35a00;
+  --warn-bg: #fdf0dc;
+  --danger: #c62828;
+  --c-media: #0f8a7e;
+  --c-rgb: #b0369c;
+  --c-mouse: #3d8b2f;
+  --c-sys: #6450c8;
+  --c-custom: #d6336c;
+  --c-chord: #b8860b;
+  --c-mod: #5b6570;
+  --sans: "Atkinson Hyperlegible Next", "Atkinson Hyperlegible", system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --glyph: "Noto Sans Math", "Noto Sans Symbols 2", "Noto Color Emoji", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #111418; --panel: #191d22; --ink: #e6e9ed; --muted: #8e97a2; --line: #2a3038;
+    --cap: #252b32; --cap-edge: #0a0c0f; --accent: #4f9bff; --accent-ink: #0b1220;
+    --warn: #f0b35c; --warn-bg: #33270f; --danger: #ff6b6b;
+    --c-media: #3cc7b8; --c-rgb: #e070cf; --c-mouse: #7ccc6c; --c-sys: #a497ff; --c-custom: #ff5c8f; --c-chord: #e0b040; --c-mod: #8e97a2;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #111418; --panel: #191d22; --ink: #e6e9ed; --muted: #8e97a2; --line: #2a3038;
+  --cap: #252b32; --cap-edge: #0a0c0f; --accent: #4f9bff; --accent-ink: #0b1220;
+  --warn: #f0b35c; --warn-bg: #33270f; --danger: #ff6b6b;
+  --c-media: #3cc7b8; --c-rgb: #e070cf; --c-mouse: #7ccc6c; --c-sys: #a497ff; --c-custom: #ff5c8f; --c-chord: #e0b040; --c-mod: #8e97a2;
+}
+
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font: 16px/1.5 var(--sans); }
+.wrap { max-width: 1240px; margin: 0 auto; padding: 32px 20px 64px; display: grid; gap: 40px; }
+h1, h2 { font-family: var(--mono); letter-spacing: -0.02em; margin: 0; text-wrap: balance; }
+h1 { font-size: clamp(1.75rem, 4vw, 2.5rem); line-height: 1.1; }
+h2 { font-size: 1.35rem; }
+p { margin: 0; }
+.muted { color: var(--muted); }
+kbd {
+  font: 700 0.8em/1 var(--mono); display: inline-block; min-width: 1.7em; text-align: center;
+  padding: 0.35em 0.45em 0.3em; border-radius: 5px; background: var(--cap); color: var(--ink);
+  border: 1px solid var(--line); border-bottom: 3px solid var(--cap-edge);
+}
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* ---- Header ---------------------------------------------------------- */
+header { display: grid; gap: 18px; }
+.eyebrow { font: 600 0.75rem/1 var(--mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+nav { display: flex; gap: 16px; flex-wrap: wrap; font-size: 0.95rem; }
+nav a { color: var(--accent); text-decoration: none; font-weight: 600; }
+nav a:hover { text-decoration: underline; }
+.how { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px; list-style: none; margin: 0; padding: 0; }
+.how li { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; display: grid; gap: 6px; align-content: start; }
+.how b { font-family: var(--mono); font-size: 0.8rem; color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; }
+.how p { font-size: 0.95rem; }
+
+/* ---- Search ---------------------------------------------------------- */
+.finder { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); padding-block: 12px; display: grid; gap: 10px; border-bottom: 1px solid var(--line); }
+.searchrow { display: flex; gap: 12px; align-items: center; }
+.search { flex: 1; display: flex; align-items: center; gap: 10px; background: var(--cap); border: 1.5px solid var(--line); border-radius: 10px; padding: 0 14px; }
+.search:focus-within { border-color: var(--accent); }
+.search input { flex: 1; min-width: 0; border: 0; outline: 0; background: transparent; color: var(--ink); font: 500 1.15rem var(--mono); padding: 12px 0; }
+.search input::placeholder { color: var(--muted); font-family: var(--sans); font-weight: 400; }
+.count { font: 500 0.85rem var(--mono); color: var(--muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.chips { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 2px; scrollbar-width: thin; }
+.chip { flex: none; border: 1px solid var(--line); background: var(--panel); border-radius: 99px; padding: 4px 11px; font-size: 0.85rem; cursor: pointer; white-space: nowrap; }
+.chip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.chip span { opacity: 0.65; font-variant-numeric: tabular-nums; margin-left: 4px; }
+
+/* ---- Results --------------------------------------------------------- */
+.results { display: grid; grid-template-columns: repeat(auto-fill, minmax(168px, 1fr)); gap: 10px; }
+.tile {
+  text-align: left; cursor: pointer; background: var(--panel); border: 1px solid var(--line); border-radius: 10px;
+  padding: 12px 14px 12px; display: grid; grid-template-rows: auto auto 1fr auto; gap: 6px; min-height: 100%;
+}
+.tile:hover { border-color: var(--accent); }
+.tile .top { display: flex; justify-content: space-between; align-items: start; gap: 6px; }
+.glyph { font: 2.3rem/1.15 var(--glyph); }
+.cp { font: 500 0.7rem var(--mono); color: var(--muted); padding-top: 4px; }
+.seq { display: flex; gap: 3px; flex-wrap: wrap; }
+.seq kbd { font-size: 0.85rem; }
+.name { font-size: 0.85rem; color: var(--muted); line-height: 1.3; }
+.alts { font: 500 0.78rem var(--mono); color: var(--muted); display: flex; flex-wrap: wrap; gap: 4px 10px; }
+.alts s { opacity: 0.7; }
+.flag { justify-self: start; font: 600 0.72rem/1.2 var(--sans); color: var(--warn); background: var(--warn-bg); padding: 3px 7px; border-radius: 5px; }
+.empty { grid-column: 1 / -1; padding: 40px 0; text-align: center; color: var(--muted); }
+.toast {
+  position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%);
+  background: var(--ink); color: var(--bg); padding: 10px 18px; border-radius: 99px; font-weight: 600; z-index: 10;
+}
+
+/* ---- Keyboard -------------------------------------------------------- */
+.layers { display: grid; gap: 16px; }
+.tabs { display: flex; flex-wrap: wrap; gap: 6px; }
+.tab { display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--line); background: var(--panel); border-radius: 8px; padding: 7px 14px; cursor: pointer; font-weight: 600; }
+.tab i { width: 10px; height: 10px; border-radius: 50%; background: var(--led); box-shadow: 0 0 8px var(--led); }
+.tab[aria-selected="true"] { border-color: var(--led); background: color-mix(in oklab, var(--led) 14%, var(--panel)); }
+.layer-meta { display: grid; gap: 4px; font-size: 0.95rem; }
+.layer-meta b { font-weight: 600; }
+.opts { display: flex; flex-wrap: wrap; gap: 8px 20px; align-items: center; font-size: 0.9rem; }
+.opts label { display: inline-flex; gap: 6px; align-items: center; cursor: pointer; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 14px; }
+.legend span { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); }
+.legend span::before { content: ""; width: 12px; height: 12px; border-radius: 3px; background: color-mix(in oklab, var(--cat) 40%, var(--cap)); border: 1px solid var(--cat); }
+.legend span.solid::before { background: var(--cat); }
+.legend span.multi::before { background: conic-gradient(var(--stops)); border-color: var(--line); }
+
+.board { overflow-x: auto; padding-bottom: 6px; }
+.case {
+  /* White Q5 Max with eggshell white keycaps: fixed physical colours, same in both themes. */
+  --egg: #f1f0ea; --egg-edge: #c9c7bd; --grey: #a6a898; --grey-edge: #7b7d6f; --green: #5f9a78; --green-edge: #3f6e53; --legend: #34383a;
+  min-width: 780px; background: linear-gradient(170deg, #f4f4f1, #d8d9d5); border-radius: 18px; padding: 1.4%;
+  box-shadow: inset 0 1px 0 #fff, inset 0 -2px 0 rgba(0,0,0,.08), 0 12px 30px -16px rgba(0,0,0,.45);
+}
+.kb { position: relative; container-type: inline-size; aspect-ratio: 20.5 / 6.25; background: #e4e5e3; border-radius: 8px; box-shadow: inset 0 1px 3px rgba(0,0,0,.12); }
+.key { position: absolute; padding: 0.14%; }
+.key > div {
+  --cat: var(--c-mod); --kcap: var(--egg); --kedge: var(--egg-edge);
+  width: 100%; height: 100%; border-radius: 0.55cqw; background: var(--kcap); color: var(--legend);
+  border: 1px solid rgba(0,0,0,.1); border-bottom-width: 0.35cqw; border-bottom-color: var(--kedge);
+  display: flex; flex-direction: column; justify-content: space-between; padding: 0.35cqw 0.45cqw;
+  font: 600 1.02cqw/1.1 var(--sans); overflow: hidden; transition: opacity .15s;
+}
+.key .s { opacity: 0.6; }
+.key .l { word-break: break-word; }
+/* The chord key is the one key the whole page revolves around: a solid fill instead of a tint. */
+.key.tint.solid > div { background: var(--cat); color: #241c05; border-bottom-color: color-mix(in oklab, var(--cat) 60%, #000); }
+.key.grey > div { --kcap: var(--grey); --kedge: var(--grey-edge); }
+.key.green > div { --kcap: var(--green); --kedge: var(--green-edge); color: #111; }
+.key.knob > div { border-radius: 50%; align-items: center; justify-content: center; text-align: center; background: radial-gradient(circle at 35% 30%, #ffffff, #c4c6c4); color: var(--legend); border-color: #a4a7a5; }
+.key.tint > div { background: color-mix(in oklab, var(--cat) 26%, var(--kcap)); color: var(--legend); border-color: color-mix(in oklab, var(--cat) 65%, transparent); border-bottom-color: color-mix(in oklab, var(--cat) 55%, var(--kedge)); }
+.key.trans > div { background: transparent; border: 1px dashed #9ba09d; color: #858b88; font-weight: 400; }
+.key.same > div { opacity: 0.32; }
+.key:hover > div, .key:focus-visible > div { opacity: 1; outline: 2px solid var(--accent); outline-offset: -1px; }
+.key:focus-visible { outline: none; }
+.keyinfo { min-height: 3em; font-size: 0.95rem; display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; }
+.keyinfo code { font: 500 0.85rem var(--mono); background: var(--panel); border: 1px solid var(--line); padding: 2px 6px; border-radius: 5px; }
+.notes { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 22px 28px; font-size: 0.92rem; }
+.notes > div { border-top: 1px solid var(--line); padding-top: 10px; display: grid; gap: 6px; align-content: start; }
+.notes b { font-family: var(--mono); font-size: 0.8rem; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); }
+
+.stack { display: grid; gap: 14px; }
+.stack > .search { max-width: 520px; }
+.acres { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 4px 20px; font: 500 0.9rem/1.6 var(--mono); }
+.acres div { display: flex; gap: 8px; min-width: 0; }
+.acres .typo { color: var(--danger); text-decoration: line-through; text-decoration-thickness: 1px; }
+.acres .b { color: var(--muted); opacity: 0.6; }
+.acres p { grid-column: 1 / -1; font-family: var(--sans); color: var(--muted); }
+.notes p { color: var(--muted); font-size: 0.85rem; }
+.notes p.lead { color: var(--ink); font-size: inherit; }
+.notes dl { display: grid; grid-template-columns: auto 1fr; gap: 5px 14px; margin: 2px 0 4px; align-items: center; }
+.notes dt { white-space: nowrap; display: flex; align-items: center; gap: 4px; }
+.notes dd { margin: 0; }
+.dot { width: 10px; height: 10px; border-radius: 50%; background: var(--led); border: 1px solid var(--line); margin-right: 4px; }
+footer { font-size: 0.85rem; color: var(--muted); }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Keychron Q5 Max · ANSI encoder · via keymap</div>
+    <h1>Cheatsheet</h1>
+    <nav><a href="#layers">Layer maps</a><a href="#tricks">Key tricks</a><a href="#autocorrect">Autocorrect</a><a href="#symbols">Symbol chords</a></nav>
+  </header>
+
+  <section id="layers" class="layers">
+    <h2>Layer maps</h2>
+    <div class="tabs" id="tabs" role="tablist" aria-label="Layers"></div>
+    <div class="layer-meta" id="layermeta"></div>
+    <div class="opts">
+      <label for="dim"><input type="checkbox" id="dim" checked> Fade keys identical to Base</label>
+      <div class="legend" id="legend"></div>
+    </div>
+    <div class="board"><div class="case"><div class="kb" id="kb"></div></div></div>
+    <div class="keyinfo" id="keyinfo"><span class="muted">Hover or focus a key for details.</span></div>
+  </section>
+
+  <section id="tricks" class="stack">
+    <h2>Key tricks</h2>
+    <div class="notes" id="tricklist"></div>
+  </section>
+
+  <section id="autocorrect" class="stack">
+    <h2>Autocorrect</h2>
+    <p class="muted" id="acintro"></p>
+    <label class="search" for="ac">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+      <input id="ac" type="search" autocomplete="off" spellcheck="false" placeholder="Check a word — e.g. teh, recieve, definately" aria-label="Search autocorrect dictionary">
+    </label>
+    <div class="acres" id="acres" aria-live="polite"></div>
+  </section>
+
+  <section id="symbols" class="stack">
+    <h2>Symbol chords</h2>
+    <ol class="how" id="how"></ol>
+    <div class="finder">
+      <div class="searchrow">
+        <label class="search" for="q">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+          <input id="q" type="search" autocomplete="off" spellcheck="false" placeholder="Search by name, sequence, or symbol — e.g. arrow, ≤, gree…" aria-label="Search symbols">
+          <kbd title="Press / to focus">/</kbd>
+        </label>
+        <span class="count" id="count"></span>
+      </div>
+      <div class="chips" id="chips" role="group" aria-label="Filter by category"></div>
+    </div>
+    <div class="results" id="results" aria-live="polite"></div>
+  </section>
+
+  <footer>Generated from <code>chord_unicode.c</code>, <code>keymap.c</code>, <code>autocorrect_dictionary.txt</code> and <code>info.json</code> by <code>gen_cheatsheet.py</code>. Click a symbol to copy it.</footer>
+</div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+const DATA = /*DATA*/null;
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+const C = DATA.consts;
+
+// ---- How-to ---------------------------------------------------------------
+$("how").innerHTML = `
+  <li><b>1 · Start</b><p>Hold <kbd>Fn1</kbd> and press <kbd>Alt</kbd> (left). Keep holding, or let go — you then have ${C.CHORD_TIMEOUT_MS / 1000} s to begin.</p></li>
+  <li><b>2 · Type</b><p>Type the letters. The symbol appears as soon as the sequence is unique. Up to ${C.CHORD_MAX_LEN} letters.</p></li>
+  <li><b>3 · Adjust</b><p><kbd>Enter</kbd> confirms now, <kbd>Backspace</kbd> removes a letter, <kbd>Esc</kbd> cancels. Output uses Linux <kbd>Ctrl</kbd><kbd>Shift</kbd><kbd>U</kbd> entry.</p></li>`;
+
+// ---- Key tricks -------------------------------------------------------------
+const K = DATA.keys;
+// Each card: title, rows of [what you do, what happens], optional footnote.
+const dot = (c) => `<i class="dot" style="--led:${c}"></i>`;
+const LEDS = Object.fromEntries(DATA.layers.map((l) => [l.name, l.led]));
+const tricks = [
+  ["Caps key", [
+    ["Tap", "<kbd>Esc</kbd>"],
+    ["Hold", "<kbd>Ctrl</kbd>"],
+    ["<kbd>Shift</kbd> + tap", "Caps Lock"],
+    ["<kbd>Alt</kbd> + tap", "Caps Word"],
+    ["<kbd>Super</kbd> + tap", "Autocorrect on / off"],
+  ], "In Caps Word, holding Shift types lowercase."],
+  ["Caps key light", [
+    [dot("#00c800") + "Green", "Caps Word on"],
+    [dot("#9600ff") + "Purple", "Autocorrect off"],
+    [dot("#ffffff") + "White", "Caps Lock on"],
+  ]],
+  ["Home / End", [
+    ["Tap", "<kbd>Home</kbd>"],
+    ["Double-tap", "<kbd>End</kbd>"],
+  ], `The key right of Enter. Double-tap within ${K.HOME_END_MS} ms. On Fn1 it is a plain End.`],
+  ["Fn keys", [
+    ["Hold <kbd>Fn1</kbd> / <kbd>Fn2</kbd>", "Layer while held"],
+    [`Tap ${K.TAPPING_TOGGLE}×`, "Layer stays on"],
+  ], `Hold time for dual-role keys: ${K.TAPPING_TERM} ms.`],
+  ["Layer locks", [
+    ["<kbd>1</kbd> – <kbd>4</kbd>", "Lock Fn1 – Fn4"],
+    ["<kbd>5</kbd>", "Lock Control"],
+    ["<kbd>0</kbd>", "Unlock, back to Base"],
+    ["Locked number again", "Unlock, back to Base"],
+  ], "Once locked on Fn1 – Fn4 the number row does this directly — no Fn hold needed. From Control, press 0.",
+  "From Base, hold <kbd>Fn1</kbd> or <kbd>Fn2</kbd>, then press:"],
+  ["Escape hatch", [
+    ["<kbd>,</kbd> <kbd>.</kbd> <kbd>/</kbd> together", "Clear locks, back to Base"],
+  ], "Works on every layer, even where those keys are remapped."],
+  ["Knob", [
+    ["Base", "Volume"],
+    ["Fn2", "Window switcher (Alt-Tab)"],
+    ["Fn1 · Fn3 · Fn4", "Rewind / fast-forward"],
+    ["Control", "Backlight brightness"],
+  ], `Window switcher: Alt releases ${K.ALT_TAB_TIMEOUT} ms after the last click.`],
+  ["Esc light", [
+    [dot("transparent") + "Off", "Base"],
+    ...["Fn1", "Fn2", "Fn3", "Fn4", "Control"].map((n) => [dot(LEDS[n]) + ({ Fn1: "Blue", Fn2: "Green", Fn3: "Orange", Fn4: "Purple", Control: "Red" })[n], n]),
+  ]],
+  ["Win / Mac switch", [
+    ["Win side", "Whole backlight white"],
+    ["Mac side", "Effect chosen in Launcher"],
+  ], "The chosen effect is kept; flipping back restores it."],
+];
+$("tricklist").innerHTML = tricks.map(([title, rows, note, lead]) => `<div><b>${title}</b>${lead ? `<p class="lead">${lead}</p>` : ""}<dl>${
+  rows.map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join("")}</dl>${note ? `<p>${note}</p>` : ""}</div>`).join("");
+
+// ---- Autocorrect --------------------------------------------------------------
+const AC = DATA.autocorrect;
+$("acintro").innerHTML = `${AC.length.toLocaleString()} typos are fixed as you type. Toggle with <kbd>Super</kbd>+tap Caps. <span class="b">|</span> marks a word edge — the typo only counts at the start or end of a word.`;
+const edge = (w) => esc(w).replace(/^:/, '<span class="b">|</span>').replace(/:$/, '<span class="b">|</span>');
+function renderAC() {
+  const q = $("ac").value.trim().toLowerCase();
+  if (!q) { $("acres").innerHTML = ""; return; }
+  const hits = AC.filter(([t, f]) => t.replace(/:/g, "").includes(q) || f.toLowerCase().includes(q));
+  const LIMIT = 60;
+  $("acres").innerHTML = hits.slice(0, LIMIT).map(([t, f]) =>
+    `<div><span class="typo">${edge(t)}</span><span class="b">→</span><span>${esc(f)}</span></div>`).join("")
+    + (hits.length > LIMIT ? `<p>${hits.length - LIMIT} more — keep typing to narrow down.</p>` : "")
+    + (hits.length ? "" : `<p>“${esc(q)}” is not in the dictionary, so autocorrect leaves it alone.</p>`);
+}
+$("ac").addEventListener("input", renderAC);
+$("ac").value = "teh";
+renderAC();
+
+// ---- Symbols ----------------------------------------------------------------
+const chords = DATA.chords.map((c) => ({
+  ...c,
+  hay: [c.out, c.name, c.cat, ...c.cp, ...c.seqs.map((s) => s.s)].join(" ").toLowerCase(),
+}));
+const cats = [...new Set(chords.map((c) => c.cat))];
+let activeCat = "All";
+
+$("chips").innerHTML = ["All", ...cats].map((cat) => {
+  const n = cat === "All" ? chords.length : chords.filter((c) => c.cat === cat).length;
+  return `<button class="chip" data-cat="${esc(cat)}" aria-pressed="${cat === activeCat}">${esc(cat)}<span>${n}</span></button>`;
+}).join("");
+$("chips").addEventListener("click", (e) => {
+  const b = e.target.closest(".chip");
+  if (!b) return;
+  activeCat = b.dataset.cat;
+  for (const c of $("chips").children) c.setAttribute("aria-pressed", c === b);
+  render();
+});
+
+function score(c, q) {
+  if (!q) return 1;
+  const words = q.split(/\s+/).filter(Boolean);
+  if (!words.every((w) => c.hay.includes(w))) return 0;
+  let s = 1;
+  for (const { s: seq } of c.seqs) {
+    if (seq === q) s = Math.max(s, 100);
+    else if (seq.startsWith(q)) s = Math.max(s, 50);
+  }
+  if (c.out === q) s = Math.max(s, 100);
+  if (c.name.toLowerCase().startsWith(q)) s = Math.max(s, 20);
+  return s;
+}
+
+const caps = (seq) => [...seq].map((ch) => `<kbd>${esc(ch)}</kbd>`).join("");
+let shown = [];
+
+function tile(c) {
+  const [primary, ...rest] = c.seqs;
+  const alts = rest.map((s) => s.st === "early"
+    ? `<s title="Fires as soon as “${esc(s.at)}” is typed; the rest is typed as plain text">${esc(s.s)}</s>`
+    : `<span>${esc(s.s)}</span>`).join("");
+  const wait = c.seqs.some((s) => s.st === "wait")
+    ? `<span class="flag" title="A longer sequence starts with the same letters">Pause ${C.CHORD_DISAMBIG_MS} ms or press Enter</span>` : "";
+  return `<button class="tile" data-out="${esc(c.out)}" title="Copy ${esc(c.out)}">
+    <div class="top"><span class="glyph">${esc(c.out)}</span><span class="cp">${c.cp.join(" ")}</span></div>
+    <div class="seq" aria-label="Sequence ${esc(primary.s)}">${caps(primary.s)}</div>
+    <div class="name">${esc(c.name || c.cat)}${alts ? `<div class="alts">also ${alts}</div>` : ""}</div>
+    ${wait}
+  </button>`;
+}
+
+function render() {
+  const q = $("q").value.trim().toLowerCase();
+  shown = chords
+    .filter((c) => activeCat === "All" || c.cat === activeCat)
+    .map((c) => [score(c, q), c]).filter(([s]) => s > 0)
+    .sort((a, b) => b[0] - a[0]).map(([, c]) => c);
+  $("count").textContent = `${shown.length} / ${chords.length}`;
+  $("results").innerHTML = shown.length ? shown.map(tile).join("")
+    : `<p class="empty">No symbol matches “${esc(q)}”. Try a name like “arrow” or “integral”.</p>`;
+}
+$("q").addEventListener("input", render);
+$("q").addEventListener("keydown", (e) => {
+  if (e.key === "Enter" && shown[0]) copy(shown[0].out);
+  if (e.key === "Escape") { $("q").value = ""; render(); }
+});
+document.addEventListener("keydown", (e) => {
+  if (e.key === "/" && document.activeElement !== $("q")) { e.preventDefault(); $("q").focus(); }
+});
+$("results").addEventListener("click", (e) => {
+  const t = e.target.closest(".tile");
+  if (t) copy(t.dataset.out);
+});
+
+let toastTimer;
+async function copy(text) {
+  let msg = `Copied ${text}`;
+  try { await navigator.clipboard.writeText(text); } catch { msg = "Copy blocked by the browser — select the symbol instead"; }
+  $("toast").textContent = msg;
+  $("toast").hidden = false;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => ($("toast").hidden = true), 1400);
+}
+render();
+
+// ---- Layers -----------------------------------------------------------------
+const CAT = {
+  mod: ["Modifier / nav", "--c-mod"], media: ["Media & system", "--c-media"], rgb: ["Backlight", "--c-rgb"],
+  mouse: ["Mouse", "--c-mouse"], sys: ["Power & wireless", "--c-sys"], custom: ["Custom", "--c-custom"],
+  chord: ["Chord key", "--c-chord"], danger: ["Destructive", "--danger"],
+};
+const layers = DATA.layers;
+const base = layers[0];
+const W = 20.5, H = 6.25;
+const LED = Object.fromEntries(layers.map((l) => [l.id, l.led]));
+let current = 0;
+const KNOB = base.keys.findIndex((k) => k.x === 19.5 && k.y === 0); // encoder push sits top-right
+
+$("legend").innerHTML = Object.entries(CAT).filter(([k]) => k !== "mod")
+  .map(([k, [label, v]]) => `<span class="${k === "chord" ? "solid" : ""}" style="--cat:var(${v})">${label}</span>`).join("")
+  + `<span class="multi" style="--stops:${layers.slice(1).map((l) => l.led).join(",")}">Layer key (colour of the layer it opens)</span>`;
+
+$("tabs").innerHTML = layers.map((l, i) =>
+  `<button class="tab" role="tab" id="tab-${l.id}" style="--led:${l.led}" aria-selected="${i === current}" data-i="${i}"><i></i>${esc(l.name)}</button>`).join("");
+$("tabs").addEventListener("click", (e) => {
+  const b = e.target.closest(".tab");
+  if (b) { current = +b.dataset.i; drawLayer(); }
+});
+$("dim").addEventListener("change", drawLayer);
+
+// Physical keycap colour follows the Base keycode at that position (the cap never changes with the layer).
+const GREEN_CAPS = new Set(["KC_ESC", "KC_ENT"]);
+const GREY_CAPS = new Set([
+  "KC_F5", "KC_F6", "KC_F7", "KC_F8", "KC_DEL", "KC_GRV", "KC_BSPC", "KC_TAB", "KC_BSLS", "CAPS_MOD",
+  "KC_LSFT", "KC_RSFT", "KC_LCTL", "KC_LGUI", "KC_LALT", "TT(FN2)", "TT(FN1)", "KC_RCTL",
+  "KC_PGUP", "KC_PGDN", "TD(TD_HOME_END)",
+]);
+const capColour = (b) => GREEN_CAPS.has(b.kc) ? "green" : GREY_CAPS.has(b.kc) ? "grey" : "white";
+
+function keyHTML(k, i, layer) {
+  const b = base.keys[i];
+  const shownKey = k.t ? b : k;
+  const knob = i === KNOB;
+  const cls = ["key"];
+  let cat = "";
+  if (k.t) cls.push("trans");
+  else if (k.to) { cls.push("tint"); cat = LED[k.to]; }
+  else if (k.c && k.c !== "mod") { cls.push("tint"); cat = `var(${CAT[k.c][1]})`; }
+  if (k.c === "chord") cls.push("solid");
+  if (knob) cls.push("knob");
+  else cls.push(capColour(b));
+  if (layer !== base && $("dim").checked && (k.t || k.kc === b.kc)) cls.push("same");
+  const style = `left:${(k.x / W) * 100}%;top:${(k.y / H) * 100}%;width:${(k.w / W) * 100}%;height:${(k.h / H) * 100}%`;
+  return `<div class="${cls.join(" ")}" style="${style}" tabindex="0" data-i="${i}">
+    <div style="${cat ? `--cat:${cat}` : ""}"><span class="s">${esc(shownKey.s || "")}</span><span class="l">${esc(shownKey.l || "")}</span></div></div>`;
+}
+
+function drawLayer() {
+  const l = layers[current];
+  for (const t of $("tabs").children) t.setAttribute("aria-selected", +t.dataset.i === current);
+  $("kb").innerHTML = l.keys.map((k, i) => keyHTML(k, i, l)).join("");
+  const via = l.via.length
+    ? l.via.map((v) => `<b>${esc(v.l)}</b> on ${esc(v.from)} <span class="muted">(${esc(v.d)})</span>`).join(" · ")
+    : "Default layer";
+  $("layermeta").innerHTML = `
+    <p><span class="muted">Reached with:</span> ${via}</p>
+    <p><span class="muted">Knob:</span> turn left <b>${esc(l.enc[0])}</b> · turn right <b>${esc(l.enc[1])}</b> · press <b>${esc((l.keys[KNOB].t ? base.keys[KNOB] : l.keys[KNOB]).d)}</b>
+    <span class="muted">· ${esc(l.ledNote)}</span></p>`;
+}
+
+function showInfo(e) {
+  const el = e.target.closest(".key");
+  if (!el) return;
+  const i = +el.dataset.i;
+  const k = layers[current].keys[i];
+  const eff = k.t ? base.keys[i] : k;
+  $("keyinfo").innerHTML = k.t
+    ? `<code>_______</code> Transparent — falls through to the layer below (Base: <b>${esc(eff.d)}</b>)`
+    : `<code>${esc(k.kc)}</code> <span>${esc(k.d)}</span>`;
+}
+$("kb").addEventListener("mouseover", showInfo);
+$("kb").addEventListener("focusin", showInfo);
+drawLayer();
+</script>

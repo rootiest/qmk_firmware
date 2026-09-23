@@ -29,6 +29,8 @@ static const chord_entry_t chord_table[] = {
 
     // ---- Math / Science ----------------------------------------------------
     {"deg",   "°"},  // degree sign          U+00B0
+    {"cels",  "℃"},  // degree Celsius       U+2103  (not "degc": would delay "deg")
+    {"fahr",  "℉"},  // degree Fahrenheit    U+2109
     {"sqrt",  "√"},  // square root          U+221A
     {"sqrd",  "²"},  // superscript 2        U+00B2
     {"cubd",  "³"},  // superscript 3        U+00B3
@@ -177,6 +179,31 @@ static const chord_entry_t chord_table[] = {
     {"wow",   "😮"},  // face with open mouth   U+1F62E
     {"zip",   "🤐"},  // zipper-mouth face      U+1F910
     {"nerdy", "🤓"},  // nerd face              U+1F913
+    {"love",   "😍"},  // heart eyes             U+1F60D
+    {"kiss",   "😘"},  // face blowing a kiss    U+1F618
+    {"blush",  "😊"},  // smiling, smiling eyes  U+1F60A
+    {"smirk",  "😏"},  // smirking face          U+1F60F
+    {"eyeroll","🙄"},  // face with rolling eyes U+1F644
+    {"sweat",  "😅"},  // grinning face w/ sweat U+1F605
+    {"rofl",   "🤣"},  // rolling on the floor   U+1F923
+    {"flip",   "🙃"},  // upside-down face       U+1F643  (not "upside": would delay "ups")
+    {"plead",  "🥺"},  // pleading face          U+1F97A
+    {"melt",   "🫠"},  // melting face           U+1FAE0
+    {"salute", "🫡"},  // saluting face          U+1FAE1
+    {"hug",    "🤗"},  // hugging face           U+1F917
+    {"shush",  "🤫"},  // shushing face          U+1F92B
+    {"mind",   "🤯"},  // exploding head         U+1F92F
+    {"mad",    "😠"},  // angry face             U+1F620  (not "angry": would delay "ang")
+    {"hot",    "🥵"},  // hot face               U+1F975
+    {"cold",   "🥶"},  // cold face              U+1F976
+    {"puke",   "🤮"},  // face vomiting          U+1F92E
+    {"party",  "🥳"},  // partying face          U+1F973
+    {"cowboy", "🤠"},  // cowboy hat face        U+1F920
+    {"halo",   "😇"},  // smiling face with halo U+1F607  (not "angel": would delay "ang")
+    {"devil",  "😈"},  // smiling face w/ horns  U+1F608
+    {"horny",  "😈"},  //   slang alias
+    {"clown",  "🤡"},  // clown face             U+1F921
+    {"ghost",  "👻"},  // ghost                  U+1F47B
 
     // ---- Emoji : Gestures --------------------------------------------------
     {"thup",  "👍"},  // thumbs up    U+1F44D
@@ -187,6 +214,12 @@ static const chord_entry_t chord_table[] = {
     {"pray",  "🙏"},  // folded hands U+1F64F
     {"ok",    "👌"},  // ok hand      U+1F44C
     {"point", "👉"},  // backhand index pointing right U+1F449
+    {"facepalm","🤦"}, // person facepalming  U+1F926
+    {"flex",   "💪"},  // flexed biceps       U+1F4AA  (not "muscle": would delay "mus")
+    {"praise", "🙌"},  // raising hands       U+1F64C
+    {"shake",  "🤝"},  // handshake           U+1F91D
+    {"luck",   "🤞"},  // crossed fingers     U+1F91E
+    {"nail",   "💅"},  // nail polish         U+1F485
 
     // ---- Emoji : Symbols ---------------------------------------------------
     // Variation selectors (U+FE0F) are omitted for cross-app compatibility;
@@ -218,6 +251,13 @@ static const chord_entry_t chord_table[] = {
     {"lock",  "🔒"},   // lock    U+1F512
     {"robot", "🤖"},   // robot   U+1F916
     {"alien", "👽"},   // alien   U+1F47D
+    {"broken", "💔"},  // broken heart   U+1F494
+    {"sparkle","✨"},  // sparkles       U+2728
+    {"drops",  "💦"},  // sweat droplets U+1F4A6
+    {"cum",    "💦"},  //   slang alias
+    {"brain",  "🧠"},  // brain          U+1F9E0
+    {"trophy", "🏆"},  // trophy         U+1F3C6
+    {"moai",   "🗿"},  // moai           U+1F5FF
 
     // ---- Emoji : Nature ----------------------------------------------------
     {"sun",   "☀"},   // black sun  U+2600
@@ -229,6 +269,9 @@ static const chord_entry_t chord_table[] = {
     {"dog",   "🐶"},   // dog face   U+1F436
     {"fox",   "🦊"},   // fox face   U+1F98A
     {"bear",  "🐻"},   // bear face  U+1F43B
+    {"goat",   "🐐"},  // goat      U+1F410
+    {"unicorn","🦄"},  // unicorn   U+1F984
+    {"rnbw",   "🌈"},  // rainbow   U+1F308  (not "rainbow": would delay "rain")
 
     // ---- Emoji : Food & Objects --------------------------------------------
     {"coffee","☕"},   // hot beverage  U+2615
@@ -251,6 +294,20 @@ static const chord_entry_t chord_table[] = {
     {"trash", "🗑"},   // wastebasket     U+1F5D1
     {"clock", "🕐"},   // one o'clock     U+1F550
     {"hour",  "⏳"},   // hourglass with flowing sand  U+23F3
+    {"eggplant","🍆"}, // eggplant  U+1F346
+    {"cock",   "🍆"},  //   slang alias
+    {"dick",   "🍆"},  //   slang alias
+    {"peach",  "🍑"},  // peach     U+1F351
+    {"butt",   "🍑"},  //   slang alias
+    {"ass",    "🍑"},  //   slang alias
+    {"melon",  "🍈"},  // melon     U+1F348
+    {"boobs",  "🍈"},  //   slang alias
+    {"taco",   "🌮"},  // taco      U+1F32E
+    {"pussy",  "🌮"},  //   slang alias
+    {"vag",    "🌮"},  //   slang alias
+    {"wine",   "🍷"},  // wine glass  U+1F377
+    {"chair",  "🪑"},  // chair     U+1FA91
+    {"lmao",   "🪑"},  //   slang alias (TikTok "I'm dead" laugh)
 };
 // clang-format on
 
@@ -275,7 +332,7 @@ static uint16_t      chord_timer   = 0; // last activity timestamp
 // whose output differs.
 static bool     chord_disambig   = false;
 static uint16_t chord_disambig_t = 0;
-static uint8_t  chord_disambig_i = 0;
+static uint16_t chord_disambig_i = 0;
 
 // ============================================================================
 // Internal helpers
@@ -289,7 +346,7 @@ static void chord_reset(void) {
     chord_disambig   = false;
 }
 
-static void chord_output(uint8_t idx) {
+static void chord_output(uint16_t idx) {
     send_unicode_string(chord_table[idx].out);
     chord_reset();
 }
@@ -308,7 +365,7 @@ static int chord_check(bool *is_prefix) {
     int  exact_idx  = -1;
     bool any_match  = false;
 
-    for (uint8_t i = 0; i < CHORD_TABLE_LEN; i++) {
+    for (uint16_t i = 0; i < CHORD_TABLE_LEN; i++) {
         uint8_t slen = (uint8_t)strlen(chord_table[i].seq);
 
         // Entry shorter than current buffer → can't match
@@ -346,7 +403,7 @@ static int chord_check(bool *is_prefix) {
     // Walk again only for the is_prefix refinement.
     if (*is_prefix) {
         *is_prefix = false;
-        for (uint8_t i = 0; i < CHORD_TABLE_LEN; i++) {
+        for (uint16_t i = 0; i < CHORD_TABLE_LEN; i++) {
             uint8_t slen = (uint8_t)strlen(chord_table[i].seq);
             if (slen <= chord_buf_len) continue;
             if (memcmp(chord_table[i].seq, chord_buf, chord_buf_len) != 0) continue;
@@ -492,7 +549,7 @@ bool process_chord(uint16_t keycode, keyrecord_t *record) {
         // Start the disambiguation timer; output fires when it expires.
         chord_disambig   = true;
         chord_disambig_t = timer_read();
-        chord_disambig_i = (uint8_t)idx;
+        chord_disambig_i = (uint16_t)idx;
     }
     // idx == -1: only prefix match(es) so far → keep collecting.
 
