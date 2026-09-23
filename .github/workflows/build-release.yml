@@ -1,0 +1,107 @@
+name: Build & Release Firmware
+
+# Runs on every push to main. Branch protection (Gitea) requires main to
+# only move via PR merge, so this is effectively "on PR merge" without
+# needing to special-case the pull_request event.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write # needed to publish/update the release
+
+jobs:
+  build:
+    # Compiling QMK (ARM toolchain install + full firmware build) is heavy.
+    # This repo mirrors from Gitea to GitHub; gate the job to the GitHub
+    # mirror so it burns GitHub's runner minutes instead of the Gitea
+    # host's own CPU. `if` is evaluated before a runner is claimed, so this
+    # job is simply skipped (not queued) on the Gitea side.
+    if: github.server_url == 'https://github.com'
+    runs-on: ubuntu-latest
+    env:
+      # The installer looks up qmk_toolchains/qmk_flashutils release assets
+      # via the unauthenticated GitHub API (60 req/hr per IP); a shared
+      # Actions runner IP burns through that fast. GITHUB_TOKEN raises the
+      # limit to 1000/hr and is auto-provided, no secret to configure.
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install QMK toolchain
+        # Official installer (matches the locally-confirmed working setup:
+        # uv-managed qmk CLI + QMK's own prebuilt toolchains) instead of
+        # hand-picking apt/pip packages. Two prior failures here:
+        #   - apt's gcc-arm-none-eabi was missing newlib's time.h
+        #   - bare `pip install qmk` didn't pull every dep the checkout's
+        #     own lib/python/qmk needs
+        # --skip-udev-rules: no hardware in CI. qmk-flashutils is NOT
+        # skipped even though nothing gets flashed here -- it also
+        # provides dfu-suffix, which the STM32 build itself shells out to
+        # after linking (builddefs/common_rules.mk) to stamp the .bin;
+        # without it `qmk compile` fails at that last step with
+        # "dfu-suffix: not found" even though the firmware built fine.
+        run: |
+          # bash, not sh: the installer sources the qmk venv's activate
+          # script, which reads bash-only $OSTYPE. Under dash (Ubuntu's
+          # /bin/sh) that reference is fatal, activation silently doesn't
+          # complete, and the requirements.txt install that follows lands
+          # outside the venv -- producing a "Could not find module appdirs"
+          # failure at compile time that looks unrelated to this step.
+          curl -fsSL https://install.qmk.fm | bash -s -- --confirm --skip-udev-rules
+          # uv's tool-shim dir and QMK's toolchain bin dir -- both XDG
+          # defaults (unset above, so unmodified by the installer).
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+          echo "$HOME/.local/share/qmk/bin" >> "$GITHUB_PATH"
+
+      - name: Install this fork's own qmk dependencies
+        # The installer's own pip step installs upstream qmk/qmk_firmware's
+        # CURRENT requirements.txt (hardcoded URL), not this repo's. Upstream
+        # has since dropped `appdirs` for `platformdirs`, but this fork's
+        # checked-out lib/python/qmk (forked pre-migration) still imports
+        # appdirs -- hence "Could not find module appdirs!" at compile time
+        # even though the installer step reports success. Install this
+        # repo's own requirements.txt into the same venv to match what its
+        # actual checked-out code needs, not upstream HEAD's.
+        run: |
+          "$HOME/.local/share/uv/tools/qmk/bin/python" -m pip install -r requirements.txt
+
+      - name: Compile firmware
+        run: qmk compile -kb keychron/q5_max/ansi_encoder -km via
+
+      - name: Locate firmware binary
+        id: fw
+        run: |
+          bin=$(find . -maxdepth 1 -name 'keychron_q5_max_ansi_encoder_via*.bin')
+          [ -n "$bin" ] || { echo "::error::no .bin produced by qmk compile" >&2; exit 1; }
+          echo "path=$bin" >> "$GITHUB_OUTPUT"
+
+      # Move the "latest" tag to this commit ourselves, synchronously,
+      # before creating the release. Handing softprops/action-gh-release a
+      # tag_name with no existing ref makes it create the tag as a side
+      # effect of the release API call -- which GitHub doesn't always
+      # complete before the response returns, leaving the release stuck
+      # `draft: true` at an `untagged-<hash>` URL despite the action
+      # logging success (seen on the first real run of this workflow).
+      - name: Move latest tag
+        run: |
+          git tag -f latest
+          git push -f origin latest
+
+      # Rolling release: tag "latest" is moved and its assets replaced on
+      # every merge to main, rather than accumulating a tag per build.
+      - name: Publish release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: latest
+          name: "Firmware: keychron/q5_max/ansi_encoder (via)"
+          body: |
+            Auto-built from ${{ github.sha }}.
+
+            Flash with QMK Toolbox or `qmk flash` in DFU mode.
+          files: ${{ steps.fw.outputs.path }}
+          make_latest: true
