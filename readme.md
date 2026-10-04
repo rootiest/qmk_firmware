@@ -10,7 +10,8 @@ top of it.
 * **[Keychron Q5 Max](/keyboards/keychron/q5_max/ansi_encoder/keymaps/via/)**
   (ansi_encoder, `via` keymap) — main daily driver. Custom chorded Unicode
   input (Greek letters, math symbols) with a generated
-  [cheatsheet](/keyboards/keychron/q5_max/ansi_encoder/keymaps/via/cheatsheet.html),
+  [cheatsheet](https://pages.rootiest.dev/qmk_firmware/cheatsheet/)
+  (source: [`cheatsheet.html`](/keyboards/keychron/q5_max/ansi_encoder/keymaps/via/cheatsheet.html)),
   autocorrect, tap-dance, a bidirectional Raw HID protocol, and custom RGB
   indicators.
 * **[Keychron K17 Max](/keyboards/keychron/k17_max/ansi_encoder/rgb/keymaps/via/)**
