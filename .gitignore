@@ -124,8 +124,6 @@ via*.json
 #   ──────────────── Added by agents-init ──────────────────
 #   agents-init --agents
 AGENTS/
-/AGENTS.md
-/CLAUDE.md
 #   ────────────────────────────────────────────────────────
 
 #   ──────────────── Added by agents-init ──────────────────
