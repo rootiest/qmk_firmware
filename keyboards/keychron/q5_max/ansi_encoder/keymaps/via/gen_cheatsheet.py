@@ -126,7 +126,7 @@ LABELS = {
     "KC_MS_LEFT": ("Ms ←", "mouse", "Mouse left"), "KC_MS_RIGHT": ("Ms →", "mouse", "Mouse right"),
     "KC_MS_BTN1": ("Click L", "mouse", "Left click"), "KC_MS_BTN2": ("Click R", "mouse", "Right click"),
     "KC_MS_BTN3": ("Click M", "mouse", "Middle click"),
-    "CAPS_MOD": ("Esc ⁄ Ctrl", "custom", "Tap Esc · hold Ctrl · Shift+tap Caps Lock · Alt+tap Caps Word · Super+tap toggle Autocorrect"),
+    "CAPS_MOD": ("Esc ⁄ Ctrl", "custom", "Tap Esc · hold Ctrl · Shift+tap Caps Lock · Alt+tap Caps Word · Super+tap toggle Autocorrect (off by default)"),
     "TD(TD_HOME_END)": ("Home ⁄ End", "custom", "Tap Home · double-tap End"),
     "CHORD_KEY": ("Chord", "chord", "Chord entry — type a sequence to output a symbol"),
     "LCK_BASE": ("Unlock", "custom", "Clear layer locks, return to Base"),
