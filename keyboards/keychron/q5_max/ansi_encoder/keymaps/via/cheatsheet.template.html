@@ -125,31 +125,44 @@ nav a:hover { text-decoration: underline; }
 .legend span.solid::before { background: var(--cat); }
 .legend span.multi::before { background: conic-gradient(var(--stops)); border-color: var(--line); }
 
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 9px; overflow: hidden; background: var(--panel); justify-self: start; }
+.seg button { border: 0; background: transparent; color: inherit; font: 600 0.85rem var(--sans); padding: 6px 12px; cursor: pointer; }
+.seg button + button { border-left: 1px solid var(--line); }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
 .board { overflow-x: auto; padding-bottom: 6px; }
 .case {
-  /* White Q5 Max with eggshell white keycaps: fixed physical colours, same in both themes. */
+  /* Light: white Q5 Max with eggshell white keycaps. Physical colours, independent of the page theme. */
   --egg: #f1f0ea; --egg-edge: #c9c7bd; --grey: #a6a898; --grey-edge: #7b7d6f; --green: #5f9a78; --green-edge: #3f6e53; --legend: #34383a;
-  min-width: 780px; background: linear-gradient(170deg, #f4f4f1, #d8d9d5); border-radius: 18px; padding: 1.4%;
-  box-shadow: inset 0 1px 0 #fff, inset 0 -2px 0 rgba(0,0,0,.08), 0 12px 30px -16px rgba(0,0,0,.45);
+  --case-bg: linear-gradient(170deg, #f4f4f1, #d8d9d5); --case-hi: #fff; --plate: #e4e5e3; --key-line: rgba(0,0,0,.1);
+  --knob-a: #ffffff; --knob-b: #c4c6c4; --knob-line: #a4a7a5; --trans-line: #9ba09d; --trans-ink: #858b88; --green-ink: #111; --solid-ink: #241c05;
+  min-width: 780px; background: var(--case-bg); border-radius: 18px; padding: 1.4%;
+  box-shadow: inset 0 1px 0 var(--case-hi), inset 0 -2px 0 rgba(0,0,0,.08), 0 12px 30px -16px rgba(0,0,0,.45);
 }
-.kb { position: relative; container-type: inline-size; aspect-ratio: 20.5 / 6.25; background: #e4e5e3; border-radius: 8px; box-shadow: inset 0 1px 3px rgba(0,0,0,.12); }
+/* Dark: the black Q5 Max with dark keycaps. */
+.board[data-kb="dark"] .case {
+  --egg: #2b2e32; --egg-edge: #131517; --grey: #44484e; --grey-edge: #1f2124; --green: #3f7a5a; --green-edge: #26493a; --legend: #dcdfe2;
+  --case-bg: linear-gradient(170deg, #2a2d31, #121416); --case-hi: rgba(255,255,255,.12); --plate: #0c0d0f; --key-line: rgba(255,255,255,.08);
+  --knob-a: #4a4e54; --knob-b: #1c1e21; --knob-line: #0a0b0c; --trans-line: #4a4f55; --trans-ink: #7d848b; --green-ink: #f2f6f3; --solid-ink: #1a1403;
+  --c-media: #3cc7b8; --c-rgb: #e070cf; --c-mouse: #7ccc6c; --c-sys: #a497ff; --c-custom: #ff5c8f; --c-chord: #e0b040; --c-mod: #8e97a2; --danger: #ff6b6b;
+}
+.kb { position: relative; container-type: inline-size; aspect-ratio: 20.5 / 6.25; background: var(--plate); border-radius: 8px; box-shadow: inset 0 1px 3px rgba(0,0,0,.12); }
 .key { position: absolute; padding: 0.14%; }
 .key > div {
   --cat: var(--c-mod); --kcap: var(--egg); --kedge: var(--egg-edge);
   width: 100%; height: 100%; border-radius: 0.55cqw; background: var(--kcap); color: var(--legend);
-  border: 1px solid rgba(0,0,0,.1); border-bottom-width: 0.35cqw; border-bottom-color: var(--kedge);
+  border: 1px solid var(--key-line); border-bottom-width: 0.35cqw; border-bottom-color: var(--kedge);
   display: flex; flex-direction: column; justify-content: space-between; padding: 0.35cqw 0.45cqw;
   font: 600 1.02cqw/1.1 var(--sans); overflow: hidden; transition: opacity .15s;
 }
 .key .s { opacity: 0.6; }
 .key .l { word-break: break-word; }
 /* The chord key is the one key the whole page revolves around: a solid fill instead of a tint. */
-.key.tint.solid > div { background: var(--cat); color: #241c05; border-bottom-color: color-mix(in oklab, var(--cat) 60%, #000); }
+.key.tint.solid > div { background: var(--cat); color: var(--solid-ink); border-bottom-color: color-mix(in oklab, var(--cat) 60%, #000); }
 .key.grey > div { --kcap: var(--grey); --kedge: var(--grey-edge); }
-.key.green > div { --kcap: var(--green); --kedge: var(--green-edge); color: #111; }
-.key.knob > div { border-radius: 50%; align-items: center; justify-content: center; text-align: center; background: radial-gradient(circle at 35% 30%, #ffffff, #c4c6c4); color: var(--legend); border-color: #a4a7a5; }
+.key.green > div { --kcap: var(--green); --kedge: var(--green-edge); color: var(--green-ink); }
+.key.knob > div { border-radius: 50%; align-items: center; justify-content: center; text-align: center; background: radial-gradient(circle at 35% 30%, var(--knob-a), var(--knob-b)); color: var(--legend); border-color: var(--knob-line); }
 .key.tint > div { background: color-mix(in oklab, var(--cat) 26%, var(--kcap)); color: var(--legend); border-color: color-mix(in oklab, var(--cat) 65%, transparent); border-bottom-color: color-mix(in oklab, var(--cat) 55%, var(--kedge)); }
-.key.trans > div { background: transparent; border: 1px dashed #9ba09d; color: #858b88; font-weight: 400; }
+.key.trans > div { background: transparent; border: 1px dashed var(--trans-line); color: var(--trans-ink); font-weight: 400; }
 .key.same > div { opacity: 0.32; }
 .key:hover > div, .key:focus-visible > div { opacity: 1; outline: 2px solid var(--accent); outline-offset: -1px; }
 .key:focus-visible { outline: none; }
@@ -191,7 +204,11 @@ footer { font-size: 0.85rem; color: var(--muted); }
       <label for="dim"><input type="checkbox" id="dim" checked> Fade keys identical to Base</label>
       <div class="legend" id="legend"></div>
     </div>
-    <div class="board"><div class="case"><div class="kb" id="kb"></div></div></div>
+    <div class="seg" id="kbtheme" role="group" aria-label="Keyboard colourway">
+      <button type="button" data-kb="light" aria-pressed="true">Light</button>
+      <button type="button" data-kb="dark" aria-pressed="false">Dark</button>
+    </div>
+    <div class="board" id="board" data-kb="light"><div class="case"><div class="kb" id="kb"></div></div></div>
     <div class="keyinfo" id="keyinfo"><span class="muted">Hover or focus a key for details.</span></div>
   </section>
 
@@ -425,6 +442,15 @@ $("tabs").addEventListener("click", (e) => {
   if (b) { current = +b.dataset.i; drawLayer(); }
 });
 $("dim").addEventListener("change", drawLayer);
+
+// Keyboard colourway (light = the white board, dark = the black one), remembered per browser.
+function setKbTheme(t, save) {
+  $("board").dataset.kb = t;
+  for (const b of $("kbtheme").children) b.setAttribute("aria-pressed", String(b.dataset.kb === t));
+  if (save) { try { localStorage.setItem("q5-cheatsheet-kb", t); } catch (e) { /* storage blocked: choice isn't remembered */ } }
+}
+try { const t = localStorage.getItem("q5-cheatsheet-kb"); if (t === "light" || t === "dark") setKbTheme(t, false); } catch (e) { /* default light */ }
+$("kbtheme").addEventListener("click", (e) => { const b = e.target.closest("[data-kb]"); if (b) setKbTheme(b.dataset.kb, true); });
 
 // Physical keycap colour follows the Base keycode at that position (the cap never changes with the layer).
 const GREEN_CAPS = new Set(["KC_ESC", "KC_ENT"]);
