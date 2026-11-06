@@ -37,6 +37,7 @@
   --c-mouse: #3d8b2f;
   --c-sys: #6450c8;
   --c-custom: #d6336c;
+  --c-macro: #1f6fae;
   --c-chord: #b8860b;
   --c-mod: #5b6570;
   --sans: "Atkinson Hyperlegible Next", "Atkinson Hyperlegible", system-ui, sans-serif;
@@ -49,7 +50,7 @@
     --bg: #111418; --panel: #191d22; --ink: #e6e9ed; --muted: #8e97a2; --line: #2a3038;
     --cap: #252b32; --cap-edge: #0a0c0f; --accent: #4f9bff; --accent-ink: #0b1220;
     --warn: #f0b35c; --warn-bg: #33270f; --danger: #ff6b6b;
-    --c-media: #3cc7b8; --c-rgb: #e070cf; --c-mouse: #7ccc6c; --c-sys: #a497ff; --c-custom: #ff5c8f; --c-chord: #e0b040; --c-mod: #8e97a2;
+    --c-media: #3cc7b8; --c-rgb: #e070cf; --c-mouse: #7ccc6c; --c-sys: #a497ff; --c-custom: #ff5c8f; --c-macro: #5fb0f0; --c-chord: #e0b040; --c-mod: #8e97a2;
   }
 }
 :root[data-theme="dark"] {
@@ -57,7 +58,7 @@
   --bg: #111418; --panel: #191d22; --ink: #e6e9ed; --muted: #8e97a2; --line: #2a3038;
   --cap: #252b32; --cap-edge: #0a0c0f; --accent: #4f9bff; --accent-ink: #0b1220;
   --warn: #f0b35c; --warn-bg: #33270f; --danger: #ff6b6b;
-  --c-media: #3cc7b8; --c-rgb: #e070cf; --c-mouse: #7ccc6c; --c-sys: #a497ff; --c-custom: #ff5c8f; --c-chord: #e0b040; --c-mod: #8e97a2;
+  --c-media: #3cc7b8; --c-rgb: #e070cf; --c-mouse: #7ccc6c; --c-sys: #a497ff; --c-custom: #ff5c8f; --c-macro: #5fb0f0; --c-chord: #e0b040; --c-mod: #8e97a2;
 }
 
 * { box-sizing: border-box; }
@@ -156,7 +157,7 @@ nav a:hover { text-decoration: underline; }
   --egg: #2b2e32; --egg-edge: #131517; --grey: #44484e; --grey-edge: #1f2124; --green: #3f7a5a; --green-edge: #26493a; --legend: #dcdfe2;
   --case-bg: linear-gradient(170deg, #2a2d31, #121416); --case-hi: rgba(255,255,255,.12); --plate: #0c0d0f; --key-line: rgba(255,255,255,.08);
   --knob-a: #4a4e54; --knob-b: #1c1e21; --knob-line: #0a0b0c; --trans-line: #4a4f55; --trans-ink: #7d848b; --green-ink: #f2f6f3; --solid-ink: #1a1403;
-  --c-media: #3cc7b8; --c-rgb: #e070cf; --c-mouse: #7ccc6c; --c-sys: #a497ff; --c-custom: #ff5c8f; --c-chord: #e0b040; --c-mod: #8e97a2; --danger: #ff6b6b;
+  --c-media: #3cc7b8; --c-rgb: #e070cf; --c-mouse: #7ccc6c; --c-sys: #a497ff; --c-custom: #ff5c8f; --c-macro: #5fb0f0; --c-chord: #e0b040; --c-mod: #8e97a2; --danger: #ff6b6b;
 }
 .kb { position: relative; container-type: inline-size; aspect-ratio: 20.5 / 6.25; background: var(--plate); border-radius: 8px; box-shadow: inset 0 1px 3px rgba(0,0,0,.12); }
 .key { position: absolute; padding: 0.14%; }
@@ -435,6 +436,7 @@ render();
 const CAT = {
   mod: ["Modifier / nav", "--c-mod"], media: ["Media & system", "--c-media"], rgb: ["Backlight", "--c-rgb"],
   mouse: ["Mouse", "--c-mouse"], sys: ["Power & wireless", "--c-sys"], custom: ["Custom", "--c-custom"],
+  macro: ["OS shortcut", "--c-macro"],
   chord: ["Chord key", "--c-chord"], danger: ["Destructive", "--danger"],
 };
 const layers = DATA.layers;

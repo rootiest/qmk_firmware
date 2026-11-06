@@ -100,6 +100,7 @@ LABELS = {
     "KC_FIND": ("Find", "media", "Find"), "KC_PGUP": ("PgUp", "mod", "Page Up"), "KC_PGDN": ("PgDn", "mod", "Page Down"),
     "KC_HOME": ("Home", "mod", "Home"), "KC_END": ("End", "mod", "End"),
     "KC_UP": ("↑", "mod", "Up"), "KC_DOWN": ("↓", "mod", "Down"), "KC_LEFT": ("←", "mod", "Left"), "KC_RGHT": ("→", "mod", "Right"),
+    "KC_RIGHT": ("→", "mod", "Right"),
     "KC_NUM": ("Num", "mod", "Num Lock"), "KC_PSLS": ("/", "", "Keypad /"), "KC_PAST": ("*", "", "Keypad *"),
     "KC_PMNS": ("−", "", "Keypad −"), "KC_PPLS": ("+", "", "Keypad +"), "KC_PDOT": (".", "", "Keypad ."),
     "KC_PENT": ("Enter", "mod", "Keypad Enter"),
@@ -132,6 +133,18 @@ LABELS = {
     "LCK_BASE": ("Unlock", "custom", "Clear layer locks, return to Base"),
     "ALT_TAB_FWD": ("Alt-Tab →", "custom", "Cycle windows forward"), "ALT_TAB_BWD": ("Alt-Tab ←", "custom", "Cycle windows back"),
 }
+# Modifier wrappers: MEH(kc), HYPR(kc), A(kc), ... -> (short label, spelled-out mods)
+MOD_WRAPS = {
+    "MEH": ("Meh", "Ctrl+Shift+Alt"), "HYPR": ("Hyper", "Ctrl+Shift+Alt+Super"),
+    "C": ("Ctrl", "Ctrl"), "S": ("Shift", "Shift"), "A": ("Alt", "Alt"), "G": ("Super", "Super"),
+    "LCTL": ("Ctrl", "Ctrl"), "LSFT": ("Shift", "Shift"), "LALT": ("Alt", "Alt"), "LGUI": ("Super", "Super"),
+    "LCA": ("Ctrl+Alt", "Ctrl+Alt"), "LCS": ("Ctrl+Shift", "Ctrl+Shift"), "LSA": ("Shift+Alt", "Shift+Alt"),
+}
+# Wrapped keys with a known purpose; anything else is described as an OS-bindable shortcut.
+WRAP_DESC = {
+    "A(KC_LEFT)": "Alt+Left — back (browser / file manager)",
+    "A(KC_RGHT)": "Alt+Right — forward (browser / file manager)",
+}
 LAYER_OPS = {
     "TT": ("", "Tap-toggle {n}: hold for momentary, tap 3× to toggle"),
     "TG": ("⇄ ", "Toggle {n} on/off"),
@@ -155,6 +168,12 @@ def describe(kc):
         layer = "KEEB_CTL" if m.group(1) == "CTL" else m.group(1)
         name = LAYER_INFO[layer][0]
         return {"l": "🔒 " + name, "c": "layer", "to": layer, "d": f"Lock {name} on (press again to unlock)"}
+    m = re.fullmatch(r"(\w+)\((KC_\w+)\)", kc)
+    if m and m.group(1) in MOD_WRAPS:
+        short, spelled = MOD_WRAPS[m.group(1)]
+        inner = describe(m.group(2))
+        desc = WRAP_DESC.get(kc, f"{spelled}+{inner['d']} — bind to an action in the OS")
+        return {"l": f"{short} {inner['l']}", "c": "macro", "d": desc}
     if kc in SHIFTED:
         top, bottom = SHIFTED[kc]
         return {"l": bottom, "s": top, "c": "", "d": kc}
