@@ -144,6 +144,7 @@ MOD_WRAPS = {
 WRAP_DESC = {
     "A(KC_LEFT)": "Alt+Left — back (browser / file manager)",
     "A(KC_RGHT)": "Alt+Right — forward (browser / file manager)",
+    "HYPR(KC_PSCR)": "Hyper+Print Screen — region screenshot (Spectacle)",
 }
 LAYER_OPS = {
     "TT": ("", "Tap-toggle {n}: hold for momentary, tap 3× to toggle"),
