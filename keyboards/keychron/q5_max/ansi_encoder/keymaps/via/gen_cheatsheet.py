@@ -92,7 +92,7 @@ SHIFTED = {
 # keycode: (label, category, description)
 LABELS = {
     "KC_ESC": ("Esc", "mod", "Escape"), "KC_TAB": ("Tab", "mod", "Tab"), "KC_BSPC": ("Backspace", "mod", "Backspace"),
-    "KC_ENT": ("Enter", "mod", "Enter"), "KC_SPC": ("", "mod", "Space"), "KC_DEL": ("Del", "mod", "Delete"),
+    "KC_ENT": ("Enter", "mod", "Enter"), "KC_SPC": ("", "mod", "Space"), "KC_DEL": ("Del", "mod", "Delete"), "KC_INS": ("Ins", "mod", "Insert"),
     "KC_LSFT": ("Shift", "mod", "Left Shift"), "KC_RSFT": ("Shift", "mod", "Right Shift"),
     "KC_LCTL": ("Ctrl", "mod", "Left Control"), "KC_RCTL": ("Ctrl", "mod", "Right Control"),
     "KC_LGUI": ("Super", "mod", "Left GUI / Super"), "KC_LALT": ("Alt", "mod", "Left Alt"),
