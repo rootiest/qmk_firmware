@@ -147,6 +147,13 @@ WRAP_DESC = {
     "A(KC_LEFT)": "Alt+Left — back (browser / file manager)",
     "A(KC_RGHT)": "Alt+Right — forward (browser / file manager)",
 }
+# Wrapped keys bound to an action in the OS: keycode -> (name, OS shortcut name, what it does).
+# Unlisted Meh/Hyper keys keep the generic "bind to an action in the OS" text.
+OS_BINDINGS = {
+    "MEH(KC_F13)": ("Sleep Display", "Sleep Display", "turn the screens off"),
+    "LSG(KC_PSCR)": ("Region Screenshot", "Capture Rectangular Region", "drag a box to capture part of the screen"),
+    "HYPR(KC_F24)": ("New TTY", "New TTY", "open and switch to a fresh text console"),
+}
 LAYER_OPS = {
     "TT": ("", "Tap-toggle {n}: hold for momentary, tap 3× to toggle"),
     "TG": ("⇄ ", "Toggle {n} on/off"),
@@ -174,7 +181,11 @@ def describe(kc):
     if m and m.group(1) in MOD_WRAPS:
         short, spelled = MOD_WRAPS[m.group(1)]
         inner = describe(m.group(2))
-        desc = WRAP_DESC.get(kc, f"{spelled}+{inner['d']} — bind to an action in the OS")
+        if kc in OS_BINDINGS:
+            name, action, what = OS_BINDINGS[kc]
+            desc = f"{name} (sends {spelled}+{inner['d']}, set as {action} in the OS) — {what}"
+        else:
+            desc = WRAP_DESC.get(kc, f"{spelled}+{inner['d']} — bind to an action in the OS")
         # Zero-width space after each "+" so multi-mod labels wrap between modifiers, not mid-word.
         return {"l": f"{short.replace('+', '+\u200b')} {inner['l']}", "c": "macro", "d": desc}
     if kc in SHIFTED:
