@@ -139,6 +139,8 @@ MOD_WRAPS = {
     "C": ("Ctrl", "Ctrl"), "S": ("Shift", "Shift"), "A": ("Alt", "Alt"), "G": ("Super", "Super"),
     "LCTL": ("Ctrl", "Ctrl"), "LSFT": ("Shift", "Shift"), "LALT": ("Alt", "Alt"), "LGUI": ("Super", "Super"),
     "LCA": ("Ctrl+Alt", "Ctrl+Alt"), "LCS": ("Ctrl+Shift", "Ctrl+Shift"), "LSA": ("Shift+Alt", "Shift+Alt"),
+    "LSG": ("Shift+Super", "Shift+Super"), "SGUI": ("Shift+Super", "Shift+Super"),
+    "LCG": ("Ctrl+Super", "Ctrl+Super"), "LAG": ("Alt+Super", "Alt+Super"), "LCAG": ("Ctrl+Alt+Super", "Ctrl+Alt+Super"),
 }
 # Wrapped keys with a known purpose; anything else is described as an OS-bindable shortcut.
 WRAP_DESC = {
@@ -173,7 +175,8 @@ def describe(kc):
         short, spelled = MOD_WRAPS[m.group(1)]
         inner = describe(m.group(2))
         desc = WRAP_DESC.get(kc, f"{spelled}+{inner['d']} — bind to an action in the OS")
-        return {"l": f"{short} {inner['l']}", "c": "macro", "d": desc}
+        # Zero-width space after each "+" so multi-mod labels wrap between modifiers, not mid-word.
+        return {"l": f"{short.replace('+', '+\u200b')} {inner['l']}", "c": "macro", "d": desc}
     if kc in SHIFTED:
         top, bottom = SHIFTED[kc]
         return {"l": bottom, "s": top, "c": "", "d": kc}
