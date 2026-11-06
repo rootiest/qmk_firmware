@@ -471,7 +471,7 @@ $("kbtheme").addEventListener("click", (e) => { const b = e.target.closest("[dat
 const GREEN_CAPS = new Set(["KC_ESC", "KC_ENT"]);
 const GREY_CAPS = new Set([
   "KC_F5", "KC_F6", "KC_F7", "KC_F8", "KC_DEL", "KC_GRV", "KC_BSPC", "KC_TAB", "KC_BSLS", "CAPS_MOD",
-  "KC_LSFT", "KC_RSFT", "KC_LCTL", "KC_LGUI", "KC_LALT", "TT(FN2)", "TT(FN1)", "KC_RCTL",
+  "KC_LSFT", "KC_RSFT", "KC_LCTL", "KC_LGUI", "KC_LALT", "TT(FN2)", "TT(FN1)", "MO(FN3)",
   "KC_PGUP", "KC_PGDN", "TD(TD_HOME_END)",
 ]);
 const capColour = (b) => GREEN_CAPS.has(b.kc) ? "green" : GREY_CAPS.has(b.kc) ? "grey" : "white";
