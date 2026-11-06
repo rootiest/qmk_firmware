@@ -153,6 +153,8 @@ OS_BINDINGS = {
     "MEH(KC_F13)": ("Sleep Display", "Sleep Display", "turn the screens off"),
     "LSG(KC_PSCR)": ("Region Screenshot", "Capture Rectangular Region", "drag a box to capture part of the screen"),
     "HYPR(KC_F24)": ("New TTY", "New TTY", "open and switch to a fresh text console"),
+    "G(KC_PSCR)": ("Window Screenshot", "Capture Active Window", "capture the focused window"),
+    "S(KC_PSCR)": ("Desktop Screenshot", "Capture Entire Desktop", "capture every screen at once"),
 }
 LAYER_OPS = {
     "TT": ("", "Tap-toggle {n}: hold for momentary, tap 3× to toggle"),
