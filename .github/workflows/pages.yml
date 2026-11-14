@@ -1,6 +1,6 @@
 # Publish this repo's static HTML to https://pages.rootiest.dev/<repo>/.
 #
-# Runs on Gitea only: the racknerd runner's "pages" label is a container job
+# Runs on Gitea only: the atlas runner's "pages" label is a container job
 # that may mount the Caddy web root (~/docker/caddy/pages, the runner's only
 # valid_volumes entry). Gitea mirrors this repo to GitHub, which also sees
 # this file, so the job is skipped there; a skipped job costs nothing and
